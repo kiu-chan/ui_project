@@ -35,6 +35,10 @@ class SettingsPage extends StatelessWidget {
                   value: 'vi',
                   child: Text(AppLocalizations.of(context)!.vietnamese),
                 ),
+                DropdownMenuItem(
+                  value: 'ja',
+                  child: Text(AppLocalizations.of(context)!.japanese),
+                ),
               ],
               onChanged: (String? newValue) {
                 if (newValue != null) {
