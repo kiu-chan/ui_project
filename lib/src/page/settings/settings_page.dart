@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:ui_project/src/providers/language_provider.dart';
-import 'login_page.dart'; // Add this import
+import 'login_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -35,10 +35,6 @@ class SettingsPage extends StatelessWidget {
                 DropdownMenuItem(
                   value: 'vi',
                   child: Text(AppLocalizations.of(context)!.vietnamese),
-                ),
-                DropdownMenuItem(
-                  value: 'ja',
-                  child: Text(AppLocalizations.of(context)!.japanese),
                 ),
               ],
               onChanged: (String? newValue) {

@@ -5,12 +5,12 @@
   "language": "Language",
   "english": "English",
   "vietnamese": "tiếng Việt",
-  "japanese": "日本語",
 
   "login": "Login",
   "loginSuccessful": "Login successful",
   "username": "User name",
   "pleaseEnterUsername": "Please enter user name",
   "password": "Password",
-  "pleaseEnterPassword": "Please enter password"
+  "pleaseEnterPassword": "Please enter password",
+  "mapTitle": "Map"
 }

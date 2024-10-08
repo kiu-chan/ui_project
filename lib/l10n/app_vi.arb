@@ -5,12 +5,12 @@
   "language": "Ngôn ngữ",
   "english": "English",
   "vietnamese": "Tiếng Việt",
-  "japanese": "日本語",
 
   "login": "Đăng nhập",
   "loginSuccessful": "Đăng nhập thành công",
   "username": "Tên người dùng",
   "pleaseEnterUsername": "Vui lòng nhập tên người dùng",
   "password": "Mật khẩu",
-  "pleaseEnterPassword": "Vui lòng nhập mật khẩu"
+  "pleaseEnterPassword": "Vui lòng nhập mật khẩu",
+  "mapTitle": "Bản đồ"
 }
