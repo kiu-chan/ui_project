@@ -1,12 +1,12 @@
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:ui_project/src/config/map.dart';
 import 'dart:ui' as ui;
 import 'dart:async';
-
 import 'package:ui_project/src/data/map/point.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:http/http.dart' as http;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -17,30 +17,43 @@ class MapPage extends StatefulWidget {
 
 class MapPageState extends State<MapPage> {
   MapboxMapController? mapController;
-  List<PointOfInterest> pointsOfInterest = [
-    PointOfInterest(
-      name: "Hồ Gươm",
-      location: LatLng(21.0285, 105.8522),
-      description: "Hồ nước nổi tiếng ở trung tâm Hà Nội",
-      imageAsset: 'lib/assets/market.png',
-    ),
-    PointOfInterest(
-      name: "Văn Miếu",
-      location: LatLng(21.0293, 105.8356),
-      description: "Quốc Tử Giám, trường đại học đầu tiên của Việt Nam",
-      imageAsset: 'lib/assets/market.png',
-    ),
-    PointOfInterest(
-      name: "Lăng Chủ tịch Hồ Chí Minh",
-      location: LatLng(21.0367, 105.8346),
-      description: "Nơi an nghỉ của Chủ tịch Hồ Chí Minh",
-      imageAsset: 'lib/assets/market.png',
-    ),
-  ];
+  List<PointOfInterest> pointsOfInterest = [];
+  final String fallbackImageAsset = 'lib/assets/market.png'; // Fallback image
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchPointsOfInterest();
+  }
+
+  Future<void> _fetchPointsOfInterest() async {
+    final firestore = FirebaseFirestore.instance;
+    final pointsSnapshot = await firestore.collection('points').get();
+
+    setState(() {
+      pointsOfInterest = pointsSnapshot.docs.map((doc) {
+        final data = doc.data();
+        return PointOfInterest(
+          name: data['name'] ?? '',
+          location: LatLng(
+            data['location'].latitude,
+            data['location'].longitude,
+          ),
+          description: data['describe'] ?? '',
+          imageAsset: data['imageAsset'] ?? fallbackImageAsset,
+        );
+      }).toList();
+    });
+
+    if (mapController != null) {
+      _addPointsOfInterest();
+    }
+  }
 
   void _onMapCreated(MapboxMapController controller) {
     mapController = controller;
     controller.onSymbolTapped.add(_onSymbolTapped);
+    _addPointsOfInterest();
   }
 
   void _onStyleLoaded() {
@@ -62,7 +75,7 @@ class MapPageState extends State<MapPage> {
     }
   }
 
-  Future<Uint8List> _createCustomMarkerImage(String assetName) async {
+  Future<Uint8List> _createCustomMarkerImage(String imageSource) async {
     final double size = 120;
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);
@@ -72,10 +85,22 @@ class MapPageState extends State<MapPage> {
     canvas.drawCircle(Offset(size / 2, size / 2), size / 2, paint);
 
     // Load and draw the image
-    final image = await _loadImage(assetName);
+    final ui.Image image = await _loadImage(imageSource);
+    final imageSize = size - 20; // Slightly smaller than the background circle
     final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
-    final dst = Rect.fromLTWH(10, 10, size - 20, size - 20);
+    final dst = Rect.fromLTWH(10, 10, imageSize, imageSize);
+
+    // Create a circular clip path
+    final clipPath = Path()
+      ..addOval(Rect.fromLTWH(10, 10, imageSize, imageSize));
+    canvas.clipPath(clipPath);
+
+    // Draw the image
     canvas.drawImageRect(image, src, dst, Paint());
+
+    // Reset the clip
+    canvas.restore();
+    canvas.save();
 
     // Draw border
     final borderPaint = Paint()
@@ -89,9 +114,33 @@ class MapPageState extends State<MapPage> {
     return data!.buffer.asUint8List();
   }
 
-  Future<ui.Image> _loadImage(String assetName) async {
-    final data = await DefaultAssetBundle.of(context).load(assetName);
-    return await decodeImageFromList(data.buffer.asUint8List());
+  Future<ui.Image> _loadImage(String imageSource) async {
+    late Uint8List imageData;
+    
+    try {
+      if (imageSource.startsWith('http')) {
+        // Load network image
+        final response = await http.get(Uri.parse(imageSource)).timeout(Duration(seconds: 5));
+        if (response.statusCode == 200) {
+          imageData = response.bodyBytes;
+        } else {
+          throw Exception('Failed to load image');
+        }
+      } else {
+        // Load asset image
+        final data = await DefaultAssetBundle.of(context).load(imageSource);
+        imageData = data.buffer.asUint8List();
+      }
+    } catch (e) {
+      print('Error loading image: $e');
+      // Load fallback image
+      final data = await DefaultAssetBundle.of(context).load(fallbackImageAsset);
+      imageData = data.buffer.asUint8List();
+    }
+
+    final codec = await ui.instantiateImageCodec(imageData);
+    final frame = await codec.getNextFrame();
+    return frame.image;
   }
 
   void _onSymbolTapped(Symbol symbol) {
