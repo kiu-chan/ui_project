@@ -8,6 +8,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
+    
     ChangeNotifierProvider(
       create: (context) => LanguageProvider(),
       child: const MyApp(),

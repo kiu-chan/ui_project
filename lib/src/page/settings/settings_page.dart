@@ -1,6 +1,8 @@
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:ui_project/src/page/login.dart';
 import 'package:ui_project/src/providers/language_provider.dart';
 import 'login_page.dart';
 
@@ -52,6 +54,27 @@ class SettingsPage extends StatelessWidget {
                 );
               },
               child: Text(AppLocalizations.of(context)!.login),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            MaterialButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Login(),
+                  ),
+                );
+              },
+              color: Colors.deepPurple,
+              child: Text(
+                'Sign out',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ],
         ),

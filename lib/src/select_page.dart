@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ui_project/src/page/map/map_page.dart';
 import 'package:ui_project/src/page/settings/settings_page.dart';
 
@@ -41,15 +42,21 @@ class SelectPageState extends State<SelectPage> {
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.home),
+            icon: const Icon(
+              LucideIcons.home,
+            ),
             label: AppLocalizations.of(context)!.home,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.map_outlined),
+            icon: const Icon(
+              LucideIcons.mapPin,
+            ),
             label: AppLocalizations.of(context)!.map,
           ),
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
+            icon: const Icon(
+              LucideIcons.settings,
+            ),
             label: AppLocalizations.of(context)!.settings,
           ),
         ],
