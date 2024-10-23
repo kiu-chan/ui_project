@@ -1,46 +1,47 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ui_project/src/page/login.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ui_project/src/page/auth/register_page.dart';
 
-class RegisterPage extends StatefulWidget {
-  const RegisterPage({
+import 'package:ui_project/src/select_page.dart';
+
+class Login extends StatefulWidget {
+  const Login({
     super.key,
   });
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
+  State<Login> createState() => _LoginState();
 }
 
-class _RegisterPageState extends State<RegisterPage> {
+class _LoginState extends State<Login> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
 
-  Future SignUp() async {
+  Future SignIn() async {
     try {
-      if (passwordConfirm()) {
-        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      if (_emailController.text.trim().isNotEmpty &&
+          _passwordController.text.trim().isNotEmpty) {
+        bool _isEmailValid = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+            .hasMatch(_emailController.text.trim());
+        if (!_isEmailValid) {
+          print('Invalid email address');
+          return;
+        }
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Login(),
+            builder: (context) => SelectPage(),
           ),
         );
+      } else {
+        print('Please fill in all fields');
       }
     } catch (e) {
       print('Error: $e');
-    }
-  }
-
-  bool passwordConfirm() {
-    if (_passwordController.text.trim() ==
-        _confirmPasswordController.text.trim()) {
-      return true;
-    } else {
-      return false;
     }
   }
 
@@ -48,7 +49,6 @@ class _RegisterPageState extends State<RegisterPage> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -72,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 75,
                 ),
                 Text(
-                  'Hello there',
+                  'Hello',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -82,7 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 10,
                 ),
                 Text(
-                  'Register below with your details!',
+                  'Welcome back',
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -151,36 +151,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 10,
                 ),
 
-                // Confirm password textfield
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 25,
-                  ),
-                  child: TextField(
-                    controller: _confirmPasswordController,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.blue,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      hintText: 'Confirm Password',
-                      fillColor: Colors.grey[200],
-                      filled: true,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-
                 // Sign in
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -193,10 +163,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: GestureDetector(
-                      onTap: SignUp,
+                      onTap: SignIn,
                       child: Center(
                         child: Text(
-                          'Sign up',
+                          'Sign in',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -216,7 +186,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Already have an account?',
+                      'Don\'t have an account?',
                       style: TextStyle(
                         color: Colors.black54,
                       ),
@@ -226,12 +196,12 @@ class _RegisterPageState extends State<RegisterPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Login(),
+                            builder: (context) => RegisterPage(),
                           ),
                         );
                       },
                       child: Text(
-                        ' Login',
+                        ' Register',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.deepPurple,

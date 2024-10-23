@@ -1,52 +1,54 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:ui_project/src/page/register_page.dart';
-import 'package:ui_project/src/select_page.dart';
+import 'package:flutter/material.dart';
+import 'package:ui_project/src/page/auth/login.dart';
 
-class Login extends StatefulWidget {
-  const Login({
+class RegisterPage extends StatefulWidget {
+  const RegisterPage({
     super.key,
   });
 
   @override
-  State<Login> createState() => _LoginState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginState extends State<Login> {
+class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+  final _confirmPasswordController = TextEditingController();
 
-  Future SignIn() async {
-  try {
-    if (_emailController.text.trim().isNotEmpty && _passwordController.text.trim().isNotEmpty) {
-      bool _isEmailValid = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(_emailController.text.trim());
-      if (!_isEmailValid) {
-        print('Invalid email address');
-        return;
+  Future SignUp() async {
+    try {
+      if (passwordConfirm()) {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Login(),
+          ),
+        );
       }
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => SelectPage(),
-        ),
-      );
-    } else {
-      print('Please fill in all fields');
+    } catch (e) {
+      print('Error: $e');
     }
-  } catch (e) {
-    print('Error: $e');
   }
-}
+
+  bool passwordConfirm() {
+    if (_passwordController.text.trim() ==
+        _confirmPasswordController.text.trim()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -70,7 +72,7 @@ class _LoginState extends State<Login> {
                   height: 75,
                 ),
                 Text(
-                  'Hello',
+                  'Hello there',
                   style: TextStyle(
                     fontSize: 30,
                     fontWeight: FontWeight.bold,
@@ -80,7 +82,7 @@ class _LoginState extends State<Login> {
                   height: 10,
                 ),
                 Text(
-                  'Welcome back',
+                  'Register below with your details!',
                   style: TextStyle(
                     fontSize: 18,
                   ),
@@ -149,6 +151,36 @@ class _LoginState extends State<Login> {
                   height: 10,
                 ),
 
+                // Confirm password textfield
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 25,
+                  ),
+                  child: TextField(
+                    controller: _confirmPasswordController,
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.blue,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      hintText: 'Confirm Password',
+                      fillColor: Colors.grey[200],
+                      filled: true,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+
                 // Sign in
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -161,10 +193,10 @@ class _LoginState extends State<Login> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: GestureDetector(
-                      onTap: SignIn,
+                      onTap: SignUp,
                       child: Center(
                         child: Text(
-                          'Sign in',
+                          'Sign up',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -184,7 +216,7 @@ class _LoginState extends State<Login> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Don\'t have an account?',
+                      'Already have an account?',
                       style: TextStyle(
                         color: Colors.black54,
                       ),
@@ -194,12 +226,12 @@ class _LoginState extends State<Login> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => RegisterPage(),
+                            builder: (context) => Login(),
                           ),
                         );
                       },
                       child: Text(
-                        ' Register',
+                        ' Login',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.deepPurple,

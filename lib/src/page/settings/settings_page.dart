@@ -1,8 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:ui_project/src/page/login.dart';
+import 'package:ui_project/src/page/auth/login.dart';
 import 'package:ui_project/src/providers/language_provider.dart';
 import 'login_page.dart';
 

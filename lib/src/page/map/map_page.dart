@@ -4,7 +4,7 @@ import 'package:mapbox_gl/mapbox_gl.dart';
 import 'package:ui_project/src/config/map.dart';
 import 'dart:ui' as ui;
 import 'dart:async';
-import 'package:ui_project/src/data/map/point.dart';
+import 'package:ui_project/models/Map/point.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 
@@ -62,9 +62,10 @@ class MapPageState extends State<MapPage> {
 
   Future<void> _addPointsOfInterest() async {
     for (var poi in pointsOfInterest) {
-      final Uint8List markerImage = await _createCustomMarkerImage(poi.imageAsset);
+      final Uint8List markerImage =
+          await _createCustomMarkerImage(poi.imageAsset);
       await mapController?.addImage(poi.name, markerImage);
-      
+
       await mapController?.addSymbol(
         SymbolOptions(
           geometry: poi.location,
@@ -87,7 +88,8 @@ class MapPageState extends State<MapPage> {
     // Load and draw the image
     final ui.Image image = await _loadImage(imageSource);
     final imageSize = size - 20; // Slightly smaller than the background circle
-    final src = Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
+    final src =
+        Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble());
     final dst = Rect.fromLTWH(10, 10, imageSize, imageSize);
 
     // Create a circular clip path
@@ -109,18 +111,22 @@ class MapPageState extends State<MapPage> {
       ..strokeWidth = 4;
     canvas.drawCircle(Offset(size / 2, size / 2), size / 2 - 2, borderPaint);
 
-    final img = await pictureRecorder.endRecording().toImage(size.toInt(), size.toInt());
+    final img = await pictureRecorder
+        .endRecording()
+        .toImage(size.toInt(), size.toInt());
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
     return data!.buffer.asUint8List();
   }
 
   Future<ui.Image> _loadImage(String imageSource) async {
     late Uint8List imageData;
-    
+
     try {
       if (imageSource.startsWith('http')) {
         // Load network image
-        final response = await http.get(Uri.parse(imageSource)).timeout(Duration(seconds: 5));
+        final response = await http
+            .get(Uri.parse(imageSource))
+            .timeout(Duration(seconds: 5));
         if (response.statusCode == 200) {
           imageData = response.bodyBytes;
         } else {
@@ -134,7 +140,8 @@ class MapPageState extends State<MapPage> {
     } catch (e) {
       print('Error loading image: $e');
       // Load fallback image
-      final data = await DefaultAssetBundle.of(context).load(fallbackImageAsset);
+      final data =
+          await DefaultAssetBundle.of(context).load(fallbackImageAsset);
       imageData = data.buffer.asUint8List();
     }
 
@@ -146,7 +153,8 @@ class MapPageState extends State<MapPage> {
   void _onSymbolTapped(Symbol symbol) {
     final tappedPoi = pointsOfInterest.firstWhere(
       (poi) => poi.location == symbol.options.geometry,
-      orElse: () => PointOfInterest(name: "", location: LatLng(0, 0), description: "", imageAsset: ""),
+      orElse: () => PointOfInterest(
+          name: "", location: LatLng(0, 0), description: "", imageAsset: ""),
     );
 
     if (tappedPoi.name.isNotEmpty) {
@@ -159,9 +167,12 @@ class MapPageState extends State<MapPage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(tappedPoi.name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Text(tappedPoi.name,
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 SizedBox(height: 8),
-                Text("Vị trí: ${tappedPoi.location.latitude.toStringAsFixed(4)}, ${tappedPoi.location.longitude.toStringAsFixed(4)}"),
+                Text(
+                    "Vị trí: ${tappedPoi.location.latitude.toStringAsFixed(4)}, ${tappedPoi.location.longitude.toStringAsFixed(4)}"),
                 SizedBox(height: 8),
                 Text(tappedPoi.description),
               ],
