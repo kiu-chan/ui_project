@@ -412,7 +412,7 @@ class _PopularDestinationsState extends State<PopularDestinations> {
         ),
         Row(
           children: [
-            flag,
+            Expanded(child: flag),
             const SizedBox(
               width: 10,
             ),

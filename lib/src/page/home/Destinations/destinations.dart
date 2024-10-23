@@ -163,20 +163,26 @@ class _DestinationsPageState extends State<DestinationsPage> {
                               width: 20,
                               height: 20,
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              destination.address,
-                              style: bodyStyle,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
+                            // const SizedBox(
+                            //   width: 10,
+                            // ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 20,
+                              ),
+                              child: Text(
+                                destination.address,
+                                style: bodyStyle,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
+                        // SizedBox(
+                        //   height: 20,
+                        // ),
                       ],
                     ),
                   ),
