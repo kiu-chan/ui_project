@@ -153,9 +153,7 @@ class _DestinationsPageState extends State<DestinationsPage> {
                           destination.title,
                           style: headLineStyle,
                         ),
-                        SizedBox(
-                          height: 5,
-                        ),
+
                         Row(
                           children: [
                             SvgPicture.asset(
@@ -166,16 +164,20 @@ class _DestinationsPageState extends State<DestinationsPage> {
                             // const SizedBox(
                             //   width: 10,
                             // ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 20,
-                              ),
-                              child: Text(
-                                destination.address,
-                                style: bodyStyle,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 2,
+
+                            SizedBox(
+                              width: MediaQuery.sizeOf(context).width * 0.8,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 20,
+                                ),
+                                child: Text(
+                                  destination.address,
+                                  style: bodyStyle,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
                               ),
                             ),
                           ],

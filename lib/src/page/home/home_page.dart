@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -361,70 +360,75 @@ class _PopularDestinationsState extends State<PopularDestinations> {
   // Style card
   Widget _cardDestination(
       Widget image, String title, SvgPicture flag, String address) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Stack(
-          children: [
-            SizedBox(
-              height: 140,
-              width: 220,
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(
-                    20,
+    return SizedBox(
+      width: 220,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 140,
+                width: 220,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                    child: image),
+              ),
+              // save
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
                   ),
-                  child: image),
-            ),
-            // save
-            Positioned(
-              top: 10,
-              right: 10,
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  onPressed: () {
-                    setState(() {
-                      isSave = !isSave;
-                    });
-                  },
-                  icon: isSave
-                      ? SvgPicture.asset('lib/assets/icons/book_mark_fill.svg')
-                      : SvgPicture.asset('lib/assets/icons/book_mark.svg'),
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isSave = !isSave;
+                      });
+                    },
+                    icon: isSave
+                        ? SvgPicture.asset(
+                            'lib/assets/icons/book_mark_fill.svg')
+                        : SvgPicture.asset('lib/assets/icons/book_mark.svg'),
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Text(
-          title,
-          style: headLineStyle,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
-          children: [
-            Expanded(child: flag),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              address,
-              style: bodyStyle,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-            ),
-          ],
-        ),
-      ],
+            ],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            title,
+            style: headLineStyle,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              flag,
+              const SizedBox(width: 10),
+              Expanded(
+                // Wrap in Expanded
+                child: Text(
+                  address,
+                  style: bodyStyle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

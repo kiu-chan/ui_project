@@ -1,0 +1,43 @@
+class CultureModel {
+  List<String> image;
+  String title;
+  String address;
+  String content;
+  String description;
+  String history;
+  String feature;
+  int isHot;
+
+  CultureModel({
+    required this.image,
+    required this.title,
+    required this.address,
+    required this.content,
+    required this.description,
+    required this.history,
+    required this.feature,
+    required this.isHot,
+  });
+
+  factory CultureModel.fromJson(Map<String, dynamic> json) {
+    var images = json['image'];
+    List<String> imageList = [];
+
+    if (images is String) {
+      imageList = [images];
+    } else if (images is List) {
+      imageList = List<String>.from(images);
+    }
+
+    return CultureModel(
+      image: imageList,
+      title: json['title'] ?? '',
+      address: json['address'] ?? '',
+      content: json['content'] ?? '',
+      description: json['description'] ?? '',
+      history: json['history'] ?? '',
+      feature: json['feature'] ?? '',
+      isHot: json['isHot'] ?? 0,
+    );
+  }
+}

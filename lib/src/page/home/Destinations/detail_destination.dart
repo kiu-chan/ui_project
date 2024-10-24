@@ -109,11 +109,14 @@ class _DetailDestinationPageState extends State<DetailDestinationPage> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Text(
-                      widget.address,
-                      style: bodyStyle,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                    SizedBox(
+                      width: MediaQuery.sizeOf(context).width * 0.8,
+                      child: Text(
+                        widget.address,
+                        style: bodyStyle,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
                     ),
                   ],
                 ),
