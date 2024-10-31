@@ -1,13 +1,15 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ui_project/models/Home/destinations_model.dart';
+import 'package:ui_project/models/Home/festival_model.dart';
+import 'package:ui_project/models/Home/food_model.dart';
 import 'package:ui_project/src/page/home/Culture/culture.dart';
 import 'package:ui_project/src/page/home/Destinations/destinations.dart';
-import 'package:ui_project/src/page/home/Destinations/detail_destination.dart';
+import 'package:ui_project/src/page/home/Food/detail_food.dart';
+import 'package:ui_project/src/page/home/detail.dart';
 import 'package:ui_project/src/page/home/Festival/festival.dart';
 import 'package:ui_project/src/page/home/Food/food.dart';
 import 'package:ui_project/src/page/home/search_page.dart';
@@ -215,7 +217,7 @@ class _HomePageState extends State<HomePage> {
               SizedBox(
                 height: 10,
               ),
-              PopularFood(),
+              PopularCulture(),
               SizedBox(
                 height: MediaQuery.sizeOf(context).height * 0.15,
               ),
@@ -315,7 +317,7 @@ class _PopularDestinationsState extends State<PopularDestinations> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailDestinationPage(
+                            builder: (context) => DetailPage(
                               title: destination.title,
                               image: destination.image,
                               address: destination.address,
@@ -408,6 +410,8 @@ class _PopularDestinationsState extends State<PopularDestinations> {
           Text(
             title,
             style: headLineStyle,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
           const SizedBox(
             height: 10,
@@ -417,7 +421,6 @@ class _PopularDestinationsState extends State<PopularDestinations> {
               flag,
               const SizedBox(width: 10),
               Expanded(
-                // Wrap in Expanded
                 child: Text(
                   address,
                   style: bodyStyle,
@@ -442,61 +445,151 @@ class PopularFestival extends StatefulWidget {
 }
 
 class _PopularFestivalState extends State<PopularFestival> {
+  final CollectionReference collectionFestival =
+      FirebaseFirestore.instance.collection('Festivals');
+  bool isSave = false;
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () {},
-            child: _cardFestival(
-              Image.asset('lib/assets/images/market.png'),
-              'Viet Nam',
-              'Ha Noi',
-            ),
-          ),
-          SizedBox(
-            width: 15,
-          ),
-          GestureDetector(
-            onTap: () {},
-            child: _cardFestival(Image.asset('lib/assets/images/market.png'),
-                'Viet Nam', 'Ha Noi'),
-          ),
-        ],
-      ),
-    );
+    return FutureBuilder(
+        future: collectionFestival.get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            List<FestivalModel> festivals = snapshot.data!.docs
+                .map(
+                  (doc) => FestivalModel.fromJson(
+                      doc.data() as Map<String, dynamic>),
+                )
+                .cast<FestivalModel>()
+                .toList();
+
+            List<FestivalModel> hotFestivals = festivals
+                .where((destination) => destination.isHot == 1)
+                .toList();
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: hotFestivals.map((festival) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailPage(
+                              title: festival.title,
+                              image: festival.image,
+                              address: festival.address,
+                              description: festival.description,
+                              history: festival.history,
+                              feature: festival.feature,
+                            ),
+                          ),
+                        );
+                      },
+                      child: _cardFestival(
+                        CachedNetworkImage(
+                          imageUrl: festival.image[0],
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Image.asset(
+                            'lib/assets/images/market.png',
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'lib/assets/images/market.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        festival.title,
+                        festival.address,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }
+        });
   }
 
   // Style card
-  Widget _cardFestival(Widget image, String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 150,
-          width: 250,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
+  Widget _cardFestival(Widget image, String title, String address) {
+    return SizedBox(
+      width: 220,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 140,
+                width: 220,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                    child: image),
+              ),
+              // save
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isSave = !isSave;
+                      });
+                    },
+                    icon: isSave
+                        ? SvgPicture.asset(
+                            'lib/assets/icons/book_mark_fill.svg')
+                        : SvgPicture.asset('lib/assets/icons/book_mark.svg'),
+                  ),
+                ),
+              ),
+            ],
           ),
-          child: image,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Text(
-          title,
-          style: headLineStyle,
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        Text(
-          content,
-          style: bodyStyle,
-        ),
-      ],
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            title,
+            style: headLineStyle,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  address,
+                  style: bodyStyle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
@@ -510,64 +603,323 @@ class PopularFood extends StatefulWidget {
 }
 
 class _PopularFoodState extends State<PopularFood> {
+  final CollectionReference collectionFood =
+      FirebaseFirestore.instance.collection('Food');
+  bool isSave = false;
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
+    return FutureBuilder(
+        future: collectionFood.get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            List<FoodModel> foods = snapshot.data!.docs
+                .map(
+                  (doc) =>
+                      FoodModel.fromJson(doc.data() as Map<String, dynamic>),
+                )
+                .toList();
+
+            List<FoodModel> hotFoods =
+                foods.where((food) => food.isHot == 1).toList();
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: hotFoods.map((food) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailFoodPage(
+                              title: food.title,
+                              image: food.image,
+                              address: food.address,
+                              description: food.description,
+                              history: food.history,
+                              feature: food.feature,
+                              ingredients: food.ingredients,
+                            ),
+                          ),
+                        );
+                      },
+                      child: _cardFood(
+                        CachedNetworkImage(
+                          imageUrl: food.image[0],
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Image.asset(
+                            'lib/assets/images/market.png',
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'lib/assets/images/market.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        food.title,
+                        SvgPicture.asset(
+                          'lib/assets/icons/vn.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        food.address[1],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }
+        });
+  }
+
+  // Style card
+  Widget _cardFood(
+      Widget image, String title, SvgPicture flag, String address) {
+    return SizedBox(
+      width: 220,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          GestureDetector(
-            onTap: () {},
-            child: _cardFood(
-              Image.asset('lib/assets/images/market.png'),
-              'Viet Nam',
-              'Ha Noi',
-            ),
+          Stack(
+            children: [
+              SizedBox(
+                height: 140,
+                width: 220,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                    child: image),
+              ),
+              // save
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isSave = !isSave;
+                      });
+                    },
+                    icon: isSave
+                        ? SvgPicture.asset(
+                            'lib/assets/icons/book_mark_fill.svg')
+                        : SvgPicture.asset('lib/assets/icons/book_mark.svg'),
+                  ),
+                ),
+              ),
+            ],
           ),
-          SizedBox(
-            width: 15,
+          const SizedBox(
+            height: 10,
           ),
-          GestureDetector(
-            onTap: () {},
-            child: _cardFood(
-              Image.asset('lib/assets/images/market.png'),
-              'Viet Nam',
-              'Ha Noi',
-            ),
+          Text(
+            title,
+            style: headLineStyle,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              flag,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  address,
+                  style: bodyStyle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          )
         ],
       ),
     );
   }
+}
+
+// List popular culture
+class PopularCulture extends StatefulWidget {
+  const PopularCulture({super.key});
+
+  @override
+  State<PopularCulture> createState() => _PopularCultureState();
+}
+
+class _PopularCultureState extends State<PopularCulture> {
+  final CollectionReference collectionCulture =
+      FirebaseFirestore.instance.collection('Culture');
+  bool isSave = false;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+        future: collectionCulture.get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            List<FoodModel> foods = snapshot.data!.docs
+                .map(
+                  (doc) =>
+                      FoodModel.fromJson(doc.data() as Map<String, dynamic>),
+                )
+                .toList();
+
+            List<FoodModel> hotFoods =
+                foods.where((food) => food.isHot == 1).toList();
+
+            return SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: hotFoods.map((food) {
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 15),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailFoodPage(
+                              title: food.title,
+                              image: food.image,
+                              address: food.address,
+                              description: food.description,
+                              history: food.history,
+                              feature: food.feature,
+                              ingredients: food.ingredients,
+                            ),
+                          ),
+                        );
+                      },
+                      child: _cardFood(
+                        CachedNetworkImage(
+                          imageUrl: food.image[0],
+                          fit: BoxFit.cover,
+                          progressIndicatorBuilder:
+                              (context, url, downloadProgress) => Image.asset(
+                            'lib/assets/images/market.png',
+                            fit: BoxFit.cover,
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            'lib/assets/images/market.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                        food.title,
+                        SvgPicture.asset(
+                          'lib/assets/icons/vn.svg',
+                          width: 20,
+                          height: 20,
+                        ),
+                        food.address[1],
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            );
+          }
+        });
+  }
 
   // Style card
-  Widget _cardFood(Widget image, String title, String content) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          height: 150,
-          width: 250,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(50),
+  Widget _cardFood(
+      Widget image, String title, SvgPicture flag, String address) {
+    return SizedBox(
+      width: 220,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Stack(
+            children: [
+              SizedBox(
+                height: 140,
+                width: 220,
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ),
+                    child: image),
+              ),
+              // save
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Container(
+                  height: 40,
+                  width: 40,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    onPressed: () {
+                      setState(() {
+                        isSave = !isSave;
+                      });
+                    },
+                    icon: isSave
+                        ? SvgPicture.asset(
+                            'lib/assets/icons/book_mark_fill.svg')
+                        : SvgPicture.asset('lib/assets/icons/book_mark.svg'),
+                  ),
+                ),
+              ),
+            ],
           ),
-          child: image,
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Text(
-          title,
-          style: headLineStyle,
-        ),
-        const SizedBox(
-          height: 5,
-        ),
-        Text(
-          content,
-          style: bodyStyle,
-        ),
-      ],
+          const SizedBox(
+            height: 10,
+          ),
+          Text(
+            title,
+            style: headLineStyle,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+          Row(
+            children: [
+              flag,
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  address,
+                  style: bodyStyle,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }

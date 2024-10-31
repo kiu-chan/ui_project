@@ -2,17 +2,15 @@ class CultureModel {
   List<String> image;
   String title;
   String address;
-  String content;
   String description;
   String history;
-  String feature;
+  List<String> feature;
   int isHot;
 
   CultureModel({
     required this.image,
     required this.title,
     required this.address,
-    required this.content,
     required this.description,
     required this.history,
     required this.feature,
@@ -29,14 +27,22 @@ class CultureModel {
       imageList = List<String>.from(images);
     }
 
+    var features = json['feature'];
+    List<String> featureList = [];
+
+    if (features is String) {
+      featureList = [features];
+    } else {
+      featureList = List<String>.from(features);
+    }
+
     return CultureModel(
       image: imageList,
       title: json['title'] ?? '',
       address: json['address'] ?? '',
-      content: json['content'] ?? '',
       description: json['description'] ?? '',
       history: json['history'] ?? '',
-      feature: json['feature'] ?? '',
+      feature: featureList,
       isHot: json['isHot'] ?? 0,
     );
   }

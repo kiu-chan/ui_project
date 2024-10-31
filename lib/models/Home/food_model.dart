@@ -1,8 +1,8 @@
 class FoodModel {
   List<String> image;
   String title;
-  String address;
-  String content;
+  List<String> address;
+  String ingredients;
   String description;
   String history;
   String feature;
@@ -12,7 +12,7 @@ class FoodModel {
     required this.image,
     required this.title,
     required this.address,
-    required this.content,
+    required this.ingredients,
     required this.description,
     required this.history,
     required this.feature,
@@ -29,11 +29,20 @@ class FoodModel {
       imageList = List<String>.from(images);
     }
 
+    var address = json['address'];
+    List<String> addressList = [];
+
+    if (address is String) {
+      addressList = [address];
+    } else if (address is List) {
+      addressList = List<String>.from(address);
+    }
+
     return FoodModel(
       image: imageList,
       title: json['title'] ?? '',
-      address: json['address'] ?? '',
-      content: json['content'] ?? '',
+      address: addressList,
+      ingredients: json['ingredients'],
       description: json['description'] ?? '',
       history: json['history'] ?? '',
       feature: json['feature'] ?? '',

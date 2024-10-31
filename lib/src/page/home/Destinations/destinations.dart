@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ui_project/models/Home/destinations_model.dart';
-import 'package:ui_project/src/page/home/Destinations/detail_destination.dart';
+import 'package:ui_project/src/page/home/detail.dart';
+import 'package:ui_project/src/page/home/search_page.dart';
 import 'package:ui_project/utils/style.dart';
 
 class DestinationsPage extends StatefulWidget {
@@ -44,7 +45,10 @@ class _DestinationsPageState extends State<DestinationsPage> {
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SearchPage()));
+            },
             icon: Icon(
               LucideIcons.search,
             ),
@@ -78,7 +82,7 @@ class _DestinationsPageState extends State<DestinationsPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (BuildContext) => DetailDestinationPage(
+                        builder: (BuildContext) => DetailPage(
                           title: destination.title,
                           image: destination.image,
                           address: destination.address,

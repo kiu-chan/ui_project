@@ -2,17 +2,18 @@ class FestivalModel {
   List<String> image;
   String title;
   String address;
-  String content;
+  String time;
   String description;
   String history;
   String feature;
+
   int isHot;
 
   FestivalModel({
     required this.image,
     required this.title,
     required this.address,
-    required this.content,
+    required this.time,
     required this.description,
     required this.history,
     required this.feature,
@@ -33,7 +34,7 @@ class FestivalModel {
       image: imageList,
       title: json['title'] ?? '',
       address: json['address'] ?? '',
-      content: json['content'] ?? '',
+      time: json['time'] ?? '',
       description: json['description'] ?? '',
       history: json['history'] ?? '',
       feature: json['feature'] ?? '',

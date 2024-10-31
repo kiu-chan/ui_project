@@ -5,7 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:ui_project/utils/style.dart';
 
 // ignore: must_be_immutable
-class DetailDestinationPage extends StatefulWidget {
+class DetailPage extends StatefulWidget {
   String title;
   List<String> image;
   String address;
@@ -13,7 +13,7 @@ class DetailDestinationPage extends StatefulWidget {
   String history;
   String feature;
 
-  DetailDestinationPage({
+  DetailPage({
     super.key,
     required this.title,
     required this.image,
@@ -24,10 +24,10 @@ class DetailDestinationPage extends StatefulWidget {
   });
 
   @override
-  State<DetailDestinationPage> createState() => _DetailDestinationPageState();
+  State<DetailPage> createState() => _DetailPageState();
 }
 
-class _DetailDestinationPageState extends State<DetailDestinationPage> {
+class _DetailPageState extends State<DetailPage> {
   final CollectionReference collectDestinations =
       FirebaseFirestore.instance.collection('Destinations');
   @override
@@ -259,7 +259,7 @@ class _DetailDestinationPageState extends State<DetailDestinationPage> {
             ),
           ),
           SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.15,
+            height: MediaQuery.sizeOf(context).height * 0.1,
           ),
         ],
       ),
