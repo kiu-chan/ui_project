@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:ui_project/models/Home/culture_model.dart';
 import 'package:ui_project/models/Home/destinations_model.dart';
 import 'package:ui_project/models/Home/festival_model.dart';
 import 'package:ui_project/models/Home/food_model.dart';
@@ -783,20 +784,20 @@ class _PopularCultureState extends State<PopularCulture> {
               child: Text('Error: ${snapshot.error}'),
             );
           } else {
-            List<FoodModel> foods = snapshot.data!.docs
+            List<CultureModel> culture = snapshot.data!.docs
                 .map(
                   (doc) =>
-                      FoodModel.fromJson(doc.data() as Map<String, dynamic>),
+                      CultureModel.fromJson(doc.data() as Map<String, dynamic>),
                 )
                 .toList();
 
-            List<FoodModel> hotFoods =
-                foods.where((food) => food.isHot == 1).toList();
+            List<CultureModel> hotCulture =
+                culture.where((culture) => culture.isHot == 1).toList();
 
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: hotFoods.map((food) {
+                children: hotCulture.map((culture) {
                   return Padding(
                     padding: const EdgeInsets.only(right: 15),
                     child: GestureDetector(
@@ -804,21 +805,20 @@ class _PopularCultureState extends State<PopularCulture> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => DetailFoodPage(
-                              title: food.title,
-                              image: food.image,
-                              address: food.address,
-                              description: food.description,
-                              history: food.history,
-                              feature: food.feature,
-                              ingredients: food.ingredients,
+                            builder: (context) => DetailPage(
+                              title: culture.title,
+                              image: culture.image,
+                              address: culture.address,
+                              description: culture.description,
+                              history: culture.history,
+                              feature: culture.feature[1],
                             ),
                           ),
                         );
                       },
-                      child: _cardFood(
+                      child: _cardCulture(
                         CachedNetworkImage(
-                          imageUrl: food.image[0],
+                          imageUrl: culture.image[0],
                           fit: BoxFit.cover,
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) => Image.asset(
@@ -830,13 +830,13 @@ class _PopularCultureState extends State<PopularCulture> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        food.title,
+                        culture.title,
                         SvgPicture.asset(
                           'lib/assets/icons/vn.svg',
                           width: 20,
                           height: 20,
                         ),
-                        food.address[1],
+                        culture.address,
                       ),
                     ),
                   );
@@ -848,7 +848,7 @@ class _PopularCultureState extends State<PopularCulture> {
   }
 
   // Style card
-  Widget _cardFood(
+  Widget _cardCulture(
       Widget image, String title, SvgPicture flag, String address) {
     return SizedBox(
       width: 220,
