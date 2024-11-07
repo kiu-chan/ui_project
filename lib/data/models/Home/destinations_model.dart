@@ -40,4 +40,6 @@ class DestinationsModels {
       isHot: json['isHot'] ?? 0,
     );
   }
+
+  where(bool Function(dynamic destinations) param0) {}
 }
