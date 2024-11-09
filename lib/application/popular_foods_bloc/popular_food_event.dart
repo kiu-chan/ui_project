@@ -13,3 +13,10 @@ class LoadedPopularFood extends PopularFoodEvent {
   @override
   List<Object?> get props => [];
 }
+
+class LoadedAllFoods extends PopularFoodEvent {
+  const LoadedAllFoods();
+
+  @override
+  List<Object?> get props => [];
+}

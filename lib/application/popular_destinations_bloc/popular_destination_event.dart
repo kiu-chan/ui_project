@@ -12,3 +12,10 @@ class LoadPopularDestination extends PopularDestinationEvent {
   @override
   List<Object?> get props => [];
 }
+
+class LoadedAllDestination extends PopularDestinationEvent {
+  const LoadedAllDestination();
+
+  @override
+  List<Object?> get props => [];
+}

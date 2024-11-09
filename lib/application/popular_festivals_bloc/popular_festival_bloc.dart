@@ -10,6 +10,7 @@ class PopularFestivalBloc
   PopularFestivalBloc({required this.repositories})
       : super(PopularFestivalInitial()) {
     on<LoadedPopularFestival>(_onFetch);
+    on<LoadedAllFestival>(_onFetchList);
   }
 
   void _onFetch(
@@ -17,6 +18,17 @@ class PopularFestivalBloc
     emit(PopularFestivalLoading());
     try {
       final festivals = await repositories.getPopularFestivals();
+      emit(PopularFestivalLoaded(festivals));
+    } catch (e) {
+      emit(PopularFestivalError(e.toString()));
+    }
+  }
+
+  void _onFetchList(
+      LoadedAllFestival event, Emitter<PopularFestivalState> emit) async {
+    emit(PopularFestivalLoading());
+    try {
+      final festivals = await repositories.getListFestival();
       emit(PopularFestivalLoaded(festivals));
     } catch (e) {
       emit(PopularFestivalError(e.toString()));

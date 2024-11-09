@@ -13,3 +13,11 @@ class LoadedPopularCultures extends PopularCulturesEvent {
   @override
   List<Object?> get props => [];
 }
+
+class LoadedAllCultures extends PopularCulturesEvent {
+  const LoadedAllCultures();
+
+  @override
+  
+  List<Object?> get props => [];
+}

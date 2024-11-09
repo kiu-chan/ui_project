@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
-import 'package:ui_project/presentation/screens/home/Culture/culture.dart';
+import 'package:ui_project/presentation/screens/home/Culture/list_culture_screen.dart';
 import 'package:ui_project/presentation/screens/home/Culture/popular_cultures_screen.dart';
-import 'package:ui_project/presentation/screens/home/Destinations/destinations.dart';
+import 'package:ui_project/presentation/screens/home/Destinations/list_destinations_screen.dart';
 import 'package:ui_project/presentation/screens/home/Destinations/popular_destinations_screen.dart';
-import 'package:ui_project/presentation/screens/home/Festival/festival.dart';
+import 'package:ui_project/presentation/screens/home/Festival/list_festivals_screen.dart';
 import 'package:ui_project/presentation/screens/home/Festival/popular_festival_screen.dart';
-import 'package:ui_project/presentation/screens/home/Food/food.dart';
+import 'package:ui_project/presentation/screens/home/Food/list_foods_screen.dart';
 import 'package:ui_project/presentation/screens/home/Food/popular_food_screen.dart';
 import 'package:ui_project/presentation/widgets/title_with_button.dart';
 import 'package:ui_project/presentation/widgets/search.dart';
@@ -40,7 +40,7 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => DestinationsPage(),
+                    builder: (context) => ListDestinationsScreen(),
                   ),
                 );
               },
@@ -58,7 +58,7 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FestivalPage(),
+                    builder: (context) => ListFestivalsScreen(),
                   ),
                 );
               },
@@ -76,7 +76,7 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => FoodPage(),
+                    builder: (context) => ListFoodsScreen(),
                   ),
                 );
               },
@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => CulturesPage(),
+                    builder: (context) => ListCulture(),
                   ),
                 );
               },

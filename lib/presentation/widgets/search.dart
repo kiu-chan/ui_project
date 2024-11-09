@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import '../screens/home/search_page.dart';
+import '../screens/home/search_screen.dart';
 
 class Search extends StatelessWidget {
   const Search({super.key});

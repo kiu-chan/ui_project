@@ -10,7 +10,7 @@ import 'package:ui_project/data/models/Home/culture_model.dart';
 import 'package:ui_project/data/models/Home/destinations_model.dart';
 import 'package:ui_project/data/models/Home/festival_model.dart';
 import 'package:ui_project/data/models/Home/food_model.dart';
-import 'package:ui_project/presentation/screens/home/detail.dart';
+import 'package:ui_project/presentation/widgets/detail.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});

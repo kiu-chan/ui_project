@@ -10,13 +10,29 @@ class PopularCulturesBloc
   PopularCulturesBloc({required this.repositories})
       : super(PopularCultureInitial()) {
     on<LoadedPopularCultures>(_onFetch);
+    on<LoadedAllCultures>(_onFetchList);
+    
   }
 
+  // List the popular culture
   void _onFetch(
       LoadedPopularCultures event, Emitter<PopularCultureState> emit) async {
     emit(PopularCultureLoading());
     try {
       final cultures = await repositories.getPopularCultures();
+      emit(PopularCultureLoaded(cultures));
+    } catch (e) {
+      emit(PopularCultureError(e.toString()));
+    }
+  }
+
+  // List all the culture
+  void _onFetchList(
+      LoadedAllCultures envet, Emitter<PopularCultureState> emit) async {
+    emit(PopularCultureLoading());
+
+    try {
+      final cultures = await repositories.getListCulture();
       emit(PopularCultureLoaded(cultures));
     } catch (e) {
       emit(PopularCultureError(e.toString()));

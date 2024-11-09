@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
-import 'package:ui_project/presentation/screens/home/home_page.dart';
+import 'package:ui_project/presentation/screens/home/home_screen.dart';
 import 'package:ui_project/presentation/screens/map/map_page.dart';
 import 'package:ui_project/presentation/screens/settings/settings_page.dart';
 

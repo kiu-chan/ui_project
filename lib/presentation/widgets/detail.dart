@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ui_project/core/constant/assets.dart';
@@ -7,9 +6,8 @@ import 'package:ui_project/core/constant/button.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
 
-
 // ignore: must_be_immutable
-class DetailPage extends StatefulWidget {
+class DetailPage extends StatelessWidget {
   String title;
   List<String> image;
   String address;
@@ -28,13 +26,6 @@ class DetailPage extends StatefulWidget {
   });
 
   @override
-  State<DetailPage> createState() => _DetailPageState();
-}
-
-class _DetailPageState extends State<DetailPage> {
-  final CollectionReference collectDestinations =
-      FirebaseFirestore.instance.collection('Destinations');
-  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -43,7 +34,7 @@ class _DetailPageState extends State<DetailPage> {
           Stack(
             children: [
               CachedNetworkImage(
-                imageUrl: widget.image[0],
+                imageUrl: image[0],
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     Image.asset(
@@ -77,7 +68,7 @@ class _DetailPageState extends State<DetailPage> {
                         child: IconButton(
                           onPressed: () {},
                           icon: SvgPicture.asset(
-                           AppAssets.BookMark,
+                            AppAssets.BookMark,
                           ),
                         ),
                       ),
@@ -99,7 +90,7 @@ class _DetailPageState extends State<DetailPage> {
                     vertical: 15,
                   ),
                   child: Text(
-                    widget.title,
+                    title,
                     style: AppTextStyle.headStyle,
                   ),
                 ),
@@ -116,7 +107,7 @@ class _DetailPageState extends State<DetailPage> {
                     SizedBox(
                       width: MediaQuery.sizeOf(context).width * 0.8,
                       child: Text(
-                        widget.address,
+                        address,
                         style: AppTextStyle.bodyStyle,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
@@ -129,7 +120,7 @@ class _DetailPageState extends State<DetailPage> {
                     vertical: 15,
                   ),
                   child: Text(
-                    widget.description,
+                    description,
                     style: AppTextStyle.bodyStyle,
                   ),
                 ),
@@ -149,7 +140,7 @@ class _DetailPageState extends State<DetailPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
-                          imageUrl: widget.image[1],
+                          imageUrl: image[1],
                           fit: BoxFit.cover,
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) => Image.asset(
@@ -170,7 +161,7 @@ class _DetailPageState extends State<DetailPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
-                          imageUrl: widget.image[2],
+                          imageUrl: image[2],
                           fit: BoxFit.cover,
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) => Image.asset(
@@ -191,7 +182,7 @@ class _DetailPageState extends State<DetailPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
-                          imageUrl: widget.image[3],
+                          imageUrl: image[3],
                           fit: BoxFit.cover,
                           progressIndicatorBuilder:
                               (context, url, downloadProgress) => Image.asset(
@@ -219,7 +210,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 ),
                 Text(
-                  widget.history,
+                  history,
                   style: AppTextStyle.bodyStyle,
                 ),
                 Padding(
@@ -232,7 +223,7 @@ class _DetailPageState extends State<DetailPage> {
                   ),
                 ),
                 Text(
-                  widget.feature,
+                  feature,
                   style: AppTextStyle.bodyStyle,
                 ),
               ],

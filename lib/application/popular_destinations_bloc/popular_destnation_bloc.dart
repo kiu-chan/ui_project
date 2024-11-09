@@ -10,8 +10,10 @@ class PopularDestnationBloc
   PopularDestnationBloc({required this.repositories})
       : super(PopularDestinationInitial()) {
     on<LoadPopularDestination>(_onFetch);
+    on<LoadedAllDestination>(_onFetchList);
   }
 
+  // Popular Destinations
   void _onFetch(LoadPopularDestination event,
       Emitter<PopularDestinationState> emit) async {
     emit(PopularDestinationLoading());
@@ -20,6 +22,21 @@ class PopularDestnationBloc
       emit(PopularDestinationLoaded(destinations));
     } catch (e) {
       emit(PopularDestinationError(e.toString()));
+    }
+  }
+
+  // List all destionations
+  void _onFetchList(
+      LoadedAllDestination event, Emitter<PopularDestinationState> emit) async {
+    emit(PopularDestinationLoading());
+
+    try {
+      final destinations = await repositories.getListDestinations();
+      emit(PopularDestinationLoaded(destinations));
+    } catch (e) {
+      emit(
+        PopularDestinationError(e.toString()),
+      );
     }
   }
 }
