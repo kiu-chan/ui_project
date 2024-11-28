@@ -2,11 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_project/application/popular_cultures_bloc/popular_cultures_bloc.dart';
-import 'package:ui_project/application/popular_cultures_bloc/popular_cultures_state.dart';
+import 'package:ui_project/application/cultures_bloc/cultures_bloc.dart';
+import 'package:ui_project/application/cultures_bloc/cultures_state.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/loading.dart';
 import 'package:ui_project/presentation/widgets/card_popular.dart';
+
+import '../../../widgets/detail.dart';
 
 class PopularCulturesScreen extends StatelessWidget {
   const PopularCulturesScreen({super.key});
@@ -31,19 +33,19 @@ class PopularCulturesScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 15),
                     child: GestureDetector(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => DetailPage(
-                        //       title: cultures.title,
-                        //       image: cultures.image,
-                        //       address: cultures.address,
-                        //       description: cultures.description,
-                        //       history: cultures.history,
-                        //       feature: cultures.feature,
-                        //     ),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailPage(
+                              title: cultures.title,
+                              image: cultures.image,
+                              address: cultures.address,
+                              description: cultures.description,
+                              history: cultures.history,
+                              feature: cultures.feature[0],
+                            ),
+                          ),
+                        );
                       },
                       child: cardPopular(
                         CachedNetworkImage(
@@ -66,6 +68,7 @@ class PopularCulturesScreen extends StatelessWidget {
                           height: 20,
                         ),
                         cultures.address,
+                        
                       ),
                     ),
                   );

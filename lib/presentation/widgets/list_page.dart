@@ -1,20 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_project/core/constant/assets.dart';
+import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
+import '../../core/constant/assets.dart';
 
 class ListPage extends StatelessWidget {
   final String title;
   final String image;
   final String address;
   final VoidCallback onPressed;
+  final Widget widget;
   const ListPage({
     super.key,
     required this.address,
     required this.image,
     required this.onPressed,
     required this.title,
+    required this.widget,
   });
 
   @override
@@ -27,6 +31,7 @@ class ListPage extends StatelessWidget {
         padding: EdgeInsets.symmetric(
           horizontal: 20,
         ),
+        color: AppColors.backGroundColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,24 +55,25 @@ class ListPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    height: 40,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                    ),
-                    child: IconButton(
-                      onPressed: () {},
-                      icon: SvgPicture.asset(
-                        AppAssets.BookMark,
-                      ),
-                    ),
-                  ),
-                ),
+                widget,
+                // Positioned(
+                //   top: 10,
+                //   right: 10,
+                //   child: Container(
+                //     height: 40,
+                //     width: 40,
+                //     decoration: BoxDecoration(
+                //       color: Colors.white,
+                //       shape: BoxShape.circle,
+                //     ),
+                //     child: IconButton(
+                //       onPressed: () {
+                //           onSaved;
+                //       },
+                //       icon: SvgPicture.asset(AppAssets.BookMark),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
             SizedBox(

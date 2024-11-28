@@ -181,7 +181,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   height: 10,
                 ),
 
-                // Sign in
+                // Sign up
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 25,

@@ -1,12 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
+
 class DestinationsModels {
-  List<String> image;
-  String title;
-  String address;
-  String content;
-  String description;
-  String history;
-  String feature;
-  int isHot;
+  final List<String> image;
+  final String title;
+  final String address;
+  final String content;
+  final String description;
+  final String history;
+  final String feature;
+  final LatLng location;
+  final int isHot;
 
   DestinationsModels({
     required this.image,
@@ -16,6 +20,7 @@ class DestinationsModels {
     required this.description,
     required this.history,
     required this.feature,
+    required this.location,
     required this.isHot,
   });
 
@@ -29,6 +34,8 @@ class DestinationsModels {
       imageList = List<String>.from(images);
     }
 
+    GeoPoint geoPoint = json['location'] ?? GeoPoint(0.0, 0.0);
+
     return DestinationsModels(
       image: imageList,
       title: json['title'] ?? '',
@@ -37,9 +44,8 @@ class DestinationsModels {
       description: json['description'] ?? '',
       history: json['history'] ?? '',
       feature: json['feature'] ?? '',
+      location: LatLng(geoPoint.latitude, geoPoint.longitude), 
       isHot: json['isHot'] ?? 0,
     );
   }
-
-  where(bool Function(dynamic destinations) param0) {}
 }

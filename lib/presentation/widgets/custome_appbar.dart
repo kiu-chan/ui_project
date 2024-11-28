@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
-import '../screens/home/search_screen.dart';
+import '../screens/home/search_page.dart';
 
 class CustomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -10,6 +11,7 @@ class CustomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      backgroundColor: AppColors.backGroundColor,
       leading: IconButton(
         onPressed: () {
           Navigator.pop(context);

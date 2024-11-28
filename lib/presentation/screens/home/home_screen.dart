@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_project/core/constant/assets.dart';
+import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
 import 'package:ui_project/presentation/screens/home/Culture/list_culture_screen.dart';
 import 'package:ui_project/presentation/screens/home/Culture/popular_cultures_screen.dart';
@@ -10,7 +11,7 @@ import 'package:ui_project/presentation/screens/home/Festival/popular_festival_s
 import 'package:ui_project/presentation/screens/home/Food/list_foods_screen.dart';
 import 'package:ui_project/presentation/screens/home/Food/popular_food_screen.dart';
 import 'package:ui_project/presentation/widgets/title_with_button.dart';
-import 'package:ui_project/presentation/widgets/search.dart';
+import 'package:ui_project/presentation/widgets/search_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -20,9 +21,10 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: AppColors.backGroundColor,
         leading: Image.asset(AppAssets.Marker),
         title: Text(
-          'Hello',
+          'HanoiVibe',
           style: AppTextStyle.appBarStyle,
         ),
         centerTitle: true,

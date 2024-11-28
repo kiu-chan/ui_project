@@ -2,11 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_project/application/popular_festivals_bloc/popular_festival_bloc.dart';
-import 'package:ui_project/application/popular_festivals_bloc/popular_festival_state.dart';
+import 'package:ui_project/application/festivals_bloc/festival_bloc.dart';
+import 'package:ui_project/application/festivals_bloc/festival_state.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/loading.dart';
 import 'package:ui_project/presentation/widgets/card_popular.dart';
+
+import '../../../widgets/detail.dart';
 
 class PopularFestivalScreen extends StatelessWidget {
   const PopularFestivalScreen({super.key});
@@ -30,19 +32,19 @@ class PopularFestivalScreen extends StatelessWidget {
                         padding: const EdgeInsets.only(right: 15),
                         child: GestureDetector(
                           onTap: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => DetailPage(
-                            //       title: festivals.title,
-                            //       image: festivals.image,
-                            //       address: festivals.address,
-                            //       description: festivals.description,
-                            //       history: festivals.history,
-                            //       feature: festivals.feature,
-                            //     ),
-                            //   ),
-                            // );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => DetailPage(
+                                  title: festivals.title,
+                                  image: festivals.image,
+                                  address: festivals.address,
+                                  description: festivals.description,
+                                  history: festivals.history,
+                                  feature: festivals.feature,
+                                ),
+                              ),
+                            );
                           },
                           child: cardPopular(
                             CachedNetworkImage(

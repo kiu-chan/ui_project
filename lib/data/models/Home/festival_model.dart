@@ -1,3 +1,7 @@
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
+
 class FestivalModel {
   List<String> image;
   String title;
@@ -6,7 +10,7 @@ class FestivalModel {
   String description;
   String history;
   String feature;
-
+  LatLng location;
   int isHot;
 
   FestivalModel({
@@ -17,6 +21,7 @@ class FestivalModel {
     required this.description,
     required this.history,
     required this.feature,
+    required this.location,
     required this.isHot,
   });
 
@@ -30,6 +35,8 @@ class FestivalModel {
       imageList = List<String>.from(images);
     }
 
+    GeoPoint geoPoint = json['location'] ?? GeoPoint(0.0, 0.0);
+
     return FestivalModel(
       image: imageList,
       title: json['title'] ?? '',
@@ -38,6 +45,7 @@ class FestivalModel {
       description: json['description'] ?? '',
       history: json['history'] ?? '',
       feature: json['feature'] ?? '',
+      location: LatLng(geoPoint.latitude, geoPoint.longitude),
       isHot: json['isHot'] ?? 0,
     );
   }

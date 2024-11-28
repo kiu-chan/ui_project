@@ -1,188 +1,64 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:ui_project/application/cultures_bloc/cultures_event.dart';
+import 'package:ui_project/application/destinations_bloc/destination_event.dart';
+import 'package:ui_project/application/destinations_bloc/destination_state.dart';
+import 'package:ui_project/application/destinations_bloc/destnation_bloc.dart';
+import 'package:ui_project/application/foods_bloc/food_event.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
-import 'package:ui_project/core/constant/textStyle.dart';
-import 'package:ui_project/data/models/Home/culture_model.dart';
-import 'package:ui_project/data/models/Home/destinations_model.dart';
-import 'package:ui_project/data/models/Home/festival_model.dart';
-import 'package:ui_project/data/models/Home/food_model.dart';
-import 'package:ui_project/presentation/widgets/detail.dart';
+import 'package:ui_project/core/constant/loading.dart';
+import 'package:ui_project/presentation/widgets/search_widget.dart';
+import '../../../application/cultures_bloc/cultures_bloc.dart';
+import '../../../application/cultures_bloc/cultures_state.dart';
+import '../../../application/festivals_bloc/festival_bloc.dart';
+import '../../../application/festivals_bloc/festival_event.dart';
+import '../../../application/festivals_bloc/festival_state.dart';
+import '../../../application/foods_bloc/food_bloc.dart';
+import '../../../application/foods_bloc/food_state.dart';
+import '../../widgets/detail.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-enum Destinations { Destination, Food, Culture, Festival }
+class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
 
-class _SearchPageState extends State<SearchPage> {
-  Set<Destinations> _selectedFilters = {Destinations.Destination};
-  TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
-
-  void _showFilter() {
-    showModalBottomSheet(
-        useRootNavigator: true,
-        context: context,
-        builder: (BuildContext context) {
-          Set<Destinations> tempSelectedFilters = Set.from(_selectedFilters);
-          return Container(
-            height: MediaQuery.sizeOf(context).height * 0.6,
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(15),
-            ),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  const SizedBox(height: 10),
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    height: 4,
-                    width: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                  AppBar(
-                    backgroundColor: Colors.white,
-                    leading: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: const Icon(LucideIcons.arrowLeft),
-                    ),
-                    title: const Text(
-                      'Filter',
-                      style: TextStyle(color: Colors.black),
-                    ),
-                    centerTitle: true,
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 15),
-                    height: 1,
-                    width: MediaQuery.sizeOf(context).width * 1,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                  ListView(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    children: Destinations.values.map((destination) {
-                      return ListTile(
-                        title: Text(
-                          destination.toString().split('.').last,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        trailing: Checkbox(
-                          activeColor: AppColors.primaryColor,
-                          value: tempSelectedFilters.contains(destination),
-                          onChanged: (bool? value) {
-                            setState(() {
-                              if (value == true) {
-                                tempSelectedFilters.add(destination);
-                              } else {
-                                tempSelectedFilters.remove(destination);
-                              }
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                  Container(
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 15, horizontal: 15),
-                    height: 1,
-                    width: MediaQuery.sizeOf(context).width * 1,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 60),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondColor,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _selectedFilters = tempSelectedFilters;
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 15, horizontal: 60),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              'OK',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
+  void _onSearchChanged(String query) {
+    print("Search query: $query");
+    if (mounted) {
+      context
+          .read<PopularCulturesBloc>()
+          .add(SearchCulturesEvent(query: query));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.backGroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15),
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: 15,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     IconButton(
                       onPressed: () {
@@ -199,11 +75,7 @@ class _SearchPageState extends State<SearchPage> {
                         ),
                         child: TextField(
                           controller: _searchController,
-                          onChanged: (value) {
-                            setState(() {
-                              _searchQuery = value.toLowerCase();
-                            });
-                          },
+                          onChanged: _onSearchChanged,
                           decoration: InputDecoration(
                             contentPadding:
                                 const EdgeInsets.symmetric(vertical: 15),
@@ -213,12 +85,13 @@ class _SearchPageState extends State<SearchPage> {
                               size: 18,
                               color: Color.fromRGBO(165, 165, 165, 1),
                             ),
-                            hintText: 'Search...',
+                            hintText: 'Tìm kiếm...',
                             hintStyle: const TextStyle(
-                                fontSize: 16,
-                                color: Color.fromRGBO(165, 165, 165, 1)),
+                              fontSize: 16,
+                              color: Color.fromRGBO(165, 165, 165, 1),
+                            ),
                             suffixIcon: IconButton(
-                              onPressed: _showFilter,
+                              onPressed: () {},
                               icon: SvgPicture.asset(
                                 AppAssets.Filter,
                                 // ignore: deprecated_member_use
@@ -235,23 +108,18 @@ class _SearchPageState extends State<SearchPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20, left: 15),
-                  child: const Text('Most Popular Search',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Most Popular Search',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
-                ..._selectedFilters.map((filter) {
-                  switch (filter) {
-                    case Destinations.Food:
-                      return FoodSearch(searchQuery: _searchQuery);
-                    case Destinations.Festival:
-                      return FestivalSearch(searchQuery: _searchQuery);
-                    case Destinations.Culture:
-                      return CultureSearch(searchQuery: _searchQuery);
-                    case Destinations.Destination:
-                    default:
-                      return DestinationsSearch(searchQuery: _searchQuery);
-                  }
-                }).toList(),
+                SearchDestinations(),
+                SearchFestivals(),
+                SearchFoods(),
+                SearchCultures(),
               ],
             ),
           ),
@@ -261,474 +129,239 @@ class _SearchPageState extends State<SearchPage> {
   }
 }
 
-// Destinations
-class DestinationsSearch extends StatefulWidget {
-  final String searchQuery;
-  const DestinationsSearch({super.key, required this.searchQuery});
+//---------------------- Destinations -----------------------------//
 
-  @override
-  State<DestinationsSearch> createState() => _DestinationsSearchState();
-}
-
-class _DestinationsSearchState extends State<DestinationsSearch> {
-  final CollectionReference collectionDestinations =
-      FirebaseFirestore.instance.collection('Destinations');
-
-  bool isSave = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+class SearchDestinations extends StatelessWidget {
+  const SearchDestinations({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: collectionDestinations.get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            List<DestinationsModels> destinations = snapshot.data!.docs
-                .map(
-                  (doc) => DestinationsModels.fromJson(
-                      doc.data() as Map<String, dynamic>),
-                )
-                .toList();
+    context.read<PopularDestnationBloc>().add(LoadedAllDestination());
 
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: destinations.map((destination) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                              title: destination.title,
-                              image: destination.image,
-                              address: destination.address,
-                              description: destination.description,
-                              history: destination.history,
-                              feature: destination.feature,
-                            ),
-                          ),
-                        );
-                      },
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(5),
-                        leading: SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 1,
-                          width: 80,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                              15,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: destination.image[0],
-                              fit: BoxFit.cover,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          destination.title,
-                          style: AppTextStyle.headLineStyle,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                destination.address,
-                                style: AppTextStyle.bodyStyle,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                        trailing: Icon(
-                          LucideIcons.chevronRight,
-                        ),
-                      ),
+    return BlocBuilder<PopularDestnationBloc, PopularDestinationState>(
+        builder: (context, state) {
+      if (state is PopularDestinationLoading) {
+        return const Center(child: AppLoading.loading);
+      } else if (state is PopularDestinationLoaded) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: state.destination.length,
+          itemBuilder: (context, index) {
+            final destinations = state.destination[index];
+            return SearchWidget(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(
+                      title: destinations.title,
+                      image: destinations.image,
+                      address: destinations.address,
+                      description: destinations.description,
+                      history: destinations.history,
+                      feature: destinations.feature,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              },
+              image: destinations.image[0],
+              title: destinations.title,
+              address: destinations.address,
             );
-          }
-        });
+          },
+        );
+      } else if (state is PopularDestinationLoaded &&
+          state.destination.isEmpty) {
+        return const Text(
+          'No reulst',
+        );
+      } else if (state is PopularDestinationError) {
+        return const Center(child: Text('Error'));
+      } else {
+        return const Center(child: Text('No Data'));
+      }
+    });
   }
 }
 
-// Festival
-class FestivalSearch extends StatefulWidget {
-  final String searchQuery;
-  const FestivalSearch({super.key, required this.searchQuery});
+//---------------------- Festivals -----------------------------//
 
-  @override
-  State<FestivalSearch> createState() => _FestivalSearchState();
-}
+class SearchFestivals extends StatelessWidget {
+  const SearchFestivals({super.key});
 
-class _FestivalSearchState extends State<FestivalSearch> {
-  final CollectionReference collectionDestinations =
-      FirebaseFirestore.instance.collection('Festivals');
-  bool isSave = false;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: collectionDestinations.get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            List<FestivalModel> festivals = snapshot.data!.docs
-                .map(
-                  (doc) => FestivalModel.fromJson(
-                      doc.data() as Map<String, dynamic>),
-                )
-                .toList();
+    context.read<PopularFestivalBloc>().add(LoadedAllFestival());
 
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: festivals.map((festival) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                              title: festival.title,
-                              image: festival.image,
-                              address: festival.address,
-                              description: festival.description,
-                              history: festival.history,
-                              feature: festival.feature,
-                            ),
-                          ),
-                        );
-                      },
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(5),
-                        leading: SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 1,
-                          width: 80,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                              15,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: festival.image[0],
-                              fit: BoxFit.cover,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          festival.title,
-                          style: AppTextStyle.headLineStyle,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                festival.address,
-                                style: AppTextStyle.bodyStyle,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                        trailing: Icon(
-                          LucideIcons.chevronRight,
-                        ),
-                      ),
+    return BlocBuilder<PopularFestivalBloc, PopularFestivalState>(
+        builder: (context, state) {
+      if (state is PopularFestivalLoading) {
+        return const Center(child: AppLoading.loading);
+      } else if (state is PopularFestivalLoaded) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: state.festival.length,
+          itemBuilder: (context, index) {
+            final festival = state.festival[index];
+            return SearchWidget(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(
+                      title: festival.title,
+                      image: festival.image,
+                      address: festival.address,
+                      description: festival.description,
+                      history: festival.history,
+                      feature: festival.feature,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              },
+              image: festival.image[0],
+              title: festival.title,
+              address: festival.address,
             );
-          }
-        });
+          },
+        );
+      } else if (state is PopularFestivalLoaded && state.festival.isEmpty) {
+        return const Text(
+          'No reulst',
+        );
+      } else if (state is PopularFestivalError) {
+        return const Center(
+          child: Text('Error'),
+        );
+      } else {
+        return const Center(
+          child: Text('No Data'),
+        );
+      }
+    });
   }
 }
 
-// Food
-class FoodSearch extends StatefulWidget {
-  final String searchQuery;
-  const FoodSearch({super.key, required this.searchQuery});
+//---------------------- Foods -----------------------------//
 
-  @override
-  State<FoodSearch> createState() => _FoodSearchState();
-}
+class SearchFoods extends StatelessWidget {
+  const SearchFoods({super.key});
 
-class _FoodSearchState extends State<FoodSearch> {
-  final CollectionReference collectionDestinations =
-      FirebaseFirestore.instance.collection('Food');
-  bool isSave = false;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: collectionDestinations.get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            List<FoodModel> foods = snapshot.data!.docs
-                .map(
-                  (doc) =>
-                      FoodModel.fromJson(doc.data() as Map<String, dynamic>),
-                )
-                .toList();
+    context.read<PopularFoodBloc>().add(
+          LoadedAllFoods(),
+        );
 
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: foods.map((foodd) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                              title: foodd.title,
-                              image: foodd.image,
-                              address: foodd.address[1],
-                              description: foodd.description,
-                              history: foodd.history,
-                              feature: foodd.feature,
-                            ),
-                          ),
-                        );
-                      },
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(5),
-                        leading: SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 1,
-                          width: 80,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                              15,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: foodd.image[0],
-                              fit: BoxFit.cover,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          foodd.title,
-                          style: AppTextStyle.headLineStyle,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                foodd.address[1],
-                                style: AppTextStyle.bodyStyle,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                        trailing: Icon(
-                          LucideIcons.chevronRight,
-                        ),
-                      ),
+    return BlocBuilder<PopularFoodBloc, PopularFoodState>(
+        builder: (context, state) {
+      if (state is PopularFoodLoading) {
+        return const Center(child: AppLoading.loading);
+      } else if (state is PopularFoodLoaded) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: state.food.length,
+          itemBuilder: (context, index) {
+            final foods = state.food[index];
+            return SearchWidget(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(
+                      title: foods.title,
+                      image: foods.image,
+                      address: foods.address[0],
+                      description: foods.description,
+                      history: foods.history,
+                      feature: foods.feature,
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              },
+              image: foods.image[0],
+              title: foods.title,
+              address: foods.address,
             );
-          }
-        });
+          },
+        );
+      } else if (state is PopularFoodLoaded && state.food.isEmpty) {
+        return const Text(
+          'No reulst',
+        );
+      } else if (state is PopularFoodError) {
+        return const Center(
+          child: Text('Error'),
+        );
+      } else {
+        return const Center(
+          child: Text('No Data'),
+        );
+      }
+    });
   }
 }
 
-// Culture
-class CultureSearch extends StatefulWidget {
-  final String searchQuery;
-  const CultureSearch({super.key, required this.searchQuery});
+//---------------------- Cultures -----------------------------//
 
-  @override
-  State<CultureSearch> createState() => _CultureSearchState();
-}
+class SearchCultures extends StatelessWidget {
+  const SearchCultures({super.key});
 
-class _CultureSearchState extends State<CultureSearch> {
-  final CollectionReference collectionDestinations =
-      FirebaseFirestore.instance.collection('Culture');
-  bool isSave = false;
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: collectionDestinations.get(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Error: ${snapshot.error}'),
-            );
-          } else {
-            List<CultureModel> cultures = snapshot.data!.docs
-                .map(
-                  (doc) =>
-                      CultureModel.fromJson(doc.data() as Map<String, dynamic>),
-                )
-                .toList();
+    context.read<PopularCulturesBloc>().add(
+          LoadedAllCultures(),
+        );
 
-            return SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: cultures.map((culture) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 15),
-                    child: GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DetailPage(
-                              title: culture.title,
-                              image: culture.image,
-                              address: culture.address[1],
-                              description: culture.description,
-                              history: culture.history,
-                              feature: culture.feature[1],
-                            ),
-                          ),
-                        );
-                      },
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(5),
-                        leading: SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 1,
-                          width: 80,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                              15,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: culture.image[0],
-                              fit: BoxFit.cover,
-                              progressIndicatorBuilder:
-                                  (context, url, downloadProgress) =>
-                                      Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                              errorWidget: (context, url, error) => Image.asset(
-                                AppAssets.Marker,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        title: Text(
-                          culture.title,
-                          style: AppTextStyle.headLineStyle,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                culture.address,
-                                style: AppTextStyle.bodyStyle,
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 1,
-                              ),
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                        trailing: Icon(
-                          LucideIcons.chevronRight,
-                        ),
-                      ),
+    return BlocBuilder<PopularCulturesBloc, PopularCultureState>(
+        builder: (context, state) {
+      if (state is PopularCultureLoading) {
+        return const Center(child: AppLoading.loading);
+      } else if (state is PopularCultureLoaded) {
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: state.culture.length,
+          itemBuilder: (context, index) {
+            final cultures = state.culture[index];
+            return SearchWidget(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DetailPage(
+                      title: cultures.title,
+                      image: cultures.image,
+                      address: cultures.address,
+                      description: cultures.description,
+                      history: cultures.history,
+                      feature: cultures.feature[1],
                     ),
-                  );
-                }).toList(),
-              ),
+                  ),
+                );
+              },
+              image: cultures.image[0],
+              title: cultures.title,
+              address: cultures.address,
             );
-          }
-        });
+          },
+        );
+      } else if (state is PopularCultureLoaded && state.culture.isEmpty) {
+        return const Text(
+          'No reulst',
+        );
+      } else if (state is PopularCultureError) {
+        return const Center(
+          child: Text('Error'),
+        );
+      } else {
+        return const Center(
+          child: Text('No Data'),
+        );
+      }
+    });
   }
 }

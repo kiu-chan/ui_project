@@ -30,4 +30,16 @@ sealed class AppTextStyle {
     color: Colors.black,
     fontWeight: FontWeight.bold,
   );
+
+  static const saved = TextStyle(
+    fontSize: 16, 
+    color: Colors.black,
+    fontWeight: FontWeight.bold,
+  );
+
+  static const bodyStyle1 = TextStyle(
+    fontSize: 15,
+    color: AppColors.textColor,
+  );
+
 }

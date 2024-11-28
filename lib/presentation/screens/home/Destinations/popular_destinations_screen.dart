@@ -2,11 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_project/application/popular_destinations_bloc/popular_destination_state.dart';
-import 'package:ui_project/application/popular_destinations_bloc/popular_destnation_bloc.dart';
+import 'package:ui_project/application/destinations_bloc/destination_state.dart';
+import 'package:ui_project/application/destinations_bloc/destnation_bloc.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/loading.dart';
 import 'package:ui_project/presentation/widgets/card_popular.dart';
+
+import '../../../widgets/detail.dart';
 
 class PopularDestinationsScreen extends StatelessWidget {
   const PopularDestinationsScreen({super.key});
@@ -31,19 +33,19 @@ class PopularDestinationsScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(right: 15),
                     child: GestureDetector(
                       onTap: () {
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(
-                        //     builder: (context) => DetailPage(
-                        //       title: destination.title,
-                        //       image: destination.image,
-                        //       address: destination.address,
-                        //       description: destination.description,
-                        //       history: destination.history,
-                        //       feature: destination.feature,
-                        //     ),
-                        //   ),
-                        // );
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailPage(
+                              title: destination.title,
+                              image: destination.image,
+                              address: destination.address,
+                              description: destination.description,
+                              history: destination.history,
+                              feature: destination.feature,
+                            ),
+                          ),
+                        );
                       },
                       child: cardPopular(
                         CachedNetworkImage(
@@ -66,6 +68,7 @@ class PopularDestinationsScreen extends StatelessWidget {
                           height: 20,
                         ),
                         destination.address,
+                        
                       ),
                     ),
                   );

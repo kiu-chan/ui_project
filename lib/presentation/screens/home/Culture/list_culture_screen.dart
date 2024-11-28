@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ui_project/application/popular_cultures_bloc/popular_cultures_bloc.dart';
-import 'package:ui_project/application/popular_cultures_bloc/popular_cultures_event.dart';
-import 'package:ui_project/application/popular_cultures_bloc/popular_cultures_state.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:ui_project/application/cultures_bloc/cultures_bloc.dart';
+import 'package:ui_project/application/cultures_bloc/cultures_event.dart';
+import 'package:ui_project/application/cultures_bloc/cultures_state.dart';
+import 'package:ui_project/application/saved_cubit/saved_cultures_cubit.dart';
 import 'package:ui_project/core/constant/loading.dart';
+import 'package:ui_project/data/models/Home/culture_model.dart';
 import 'package:ui_project/presentation/widgets/detail.dart';
 import 'package:ui_project/presentation/widgets/custome_appbar.dart';
-import 'package:ui_project/presentation/widgets/list_page.dart';
+import '../../../../core/constant/assets.dart';
+import '../../../widgets/list_page.dart';
 
 class ListCulture extends StatelessWidget {
   const ListCulture({super.key});
@@ -48,13 +52,45 @@ class ListCulture extends StatelessWidget {
                     );
                   },
                   title: culture.title,
+                  widget: Positioned(
+                    top: 10,
+                    right: 10,
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                      ),
+                      child:
+                          BlocBuilder<SavedCulturesCubit, List<CultureModel>>(
+                        builder: (context, state) {
+                          final isSaved =
+                              state.any((item) => item.image == culture.image);
+                          return IconButton(
+                            onPressed: () {
+                              context
+                                  .read<SavedCulturesCubit>()
+                                  .toggleSave(context, culture);
+                              
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 );
               },
             );
           } else if (state is PopularCultureError) {
             return Center(child: Text(state.message));
           } else {
-            return Center(child: Text('No data available.'));
+            return Center(
+              child: Text('No data available.'),
+            );
           }
         },
       ),

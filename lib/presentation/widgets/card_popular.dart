@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
 
+import '../../core/constant/assets.dart';
+
 Widget cardPopular(
-    Widget image, String title, SvgPicture flag, String address) {
+  Widget image,
+  String title,
+  SvgPicture flag,
+  String address,
+ 
+) {
   return SizedBox(
     width: 220,
     child: Column(
@@ -19,7 +25,8 @@ Widget cardPopular(
                   borderRadius: BorderRadius.circular(
                     20,
                   ),
-                  child: image),
+                  child: image,
+                  ),
             ),
             // save
             Positioned(
@@ -38,6 +45,7 @@ Widget cardPopular(
                 ),
               ),
             ),
+            
           ],
         ),
         const SizedBox(

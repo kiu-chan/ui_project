@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
         <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
         <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+        <uses-feature android:name="android.hardware.camera" />
+        <uses-feature android:name="android.hardware.camera.autofocus" />
+        <uses-permission android:name="android.permission.CAMERA" />
     <application
         android:label="ui_project"
         android:name="${applicationName}"
@@ -42,6 +45,10 @@
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
-        </intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="http" />
+            <data android:scheme="https" />
+            </intent>
     </queries>
 </manifest>

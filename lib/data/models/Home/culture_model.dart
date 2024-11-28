@@ -1,10 +1,15 @@
-class CultureModel {
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
+
+class CultureModel{
   List<String> image;
   String title;
   String address;
   String description;
   String history;
   List<String> feature;
+  LatLng location;
   int isHot;
 
   CultureModel({
@@ -14,6 +19,7 @@ class CultureModel {
     required this.description,
     required this.history,
     required this.feature,
+    required this.location,
     required this.isHot,
   });
 
@@ -36,6 +42,8 @@ class CultureModel {
       featureList = List<String>.from(features);
     }
 
+    GeoPoint geoPoint = json['location'] ?? GeoPoint(0.0, 0.0); 
+
     return CultureModel(
       image: imageList,
       title: json['title'] ?? '',
@@ -43,6 +51,7 @@ class CultureModel {
       description: json['description'] ?? '',
       history: json['history'] ?? '',
       feature: featureList,
+      location: LatLng(geoPoint.latitude, geoPoint.longitude),
       isHot: json['isHot'] ?? 0,
     );
   }

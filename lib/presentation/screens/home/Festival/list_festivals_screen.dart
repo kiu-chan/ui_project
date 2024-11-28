@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ui_project/application/popular_festivals_bloc/popular_festival_bloc.dart';
-import 'package:ui_project/application/popular_festivals_bloc/popular_festival_event.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:ui_project/application/festivals_bloc/festival_bloc.dart';
+import 'package:ui_project/application/saved_cubit/saved_festivals_cubit.dart';
 import 'package:ui_project/core/constant/loading.dart';
+import 'package:ui_project/data/models/Home/festival_model.dart';
 import 'package:ui_project/presentation/widgets/detail.dart';
 import 'package:ui_project/presentation/widgets/custome_appbar.dart';
 import 'package:ui_project/presentation/widgets/list_page.dart';
-import '../../../../application/popular_festivals_bloc/popular_festival_state.dart';
+import '../../../../application/festivals_bloc/festival_event.dart';
+import '../../../../application/festivals_bloc/festival_state.dart';
+import '../../../../core/constant/assets.dart';
 
 class ListFestivalsScreen extends StatelessWidget {
   const ListFestivalsScreen({super.key});
@@ -28,24 +32,54 @@ class ListFestivalsScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final festivals = state.festival[index];
               return ListPage(
-                  address: festivals.address,
-                  image: festivals.image[0],
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailPage(
-                          title: festivals.title,
-                          image: festivals.image,
-                          address: festivals.address,
-                          description: festivals.description,
-                          history: festivals.history,
-                          feature: festivals.feature[1],
-                        ),
+                address: festivals.address,
+                image: festivals.image[0],
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPage(
+                        title: festivals.title,
+                        image: festivals.image,
+                        address: festivals.address,
+                        description: festivals.description,
+                        history: festivals.history,
+                        feature: festivals.feature,
                       ),
-                    );
-                  },
-                  title: festivals.title);
+                    ),
+                  );
+                },
+                title: festivals.title,
+                widget: Positioned(
+                  top: 10,
+                  right: 10,
+                  child: Container(
+                    height: 40,
+                    width: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child:
+                        BlocBuilder<SavedFestivalsCubit, List<FestivalModel>>(
+                      builder: (context, state) {
+                        final isSaved =
+                            state.any((item) => item.image == festivals.image);
+                        return IconButton(
+                          onPressed: () {
+                            context
+                                .read<SavedFestivalsCubit>()
+                                .toogleSave(context, festivals);
+                          },
+                          icon: isSaved
+                              ? SvgPicture.asset(AppAssets.BookMarkFill)
+                              : SvgPicture.asset(AppAssets.BookMark),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              );
             },
           );
         } else if (state is PopularFestivalError) {

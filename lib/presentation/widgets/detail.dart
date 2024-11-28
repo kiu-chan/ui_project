@@ -6,14 +6,13 @@ import 'package:ui_project/core/constant/button.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
 
-// ignore: must_be_immutable
 class DetailPage extends StatelessWidget {
-  String title;
-  List<String> image;
-  String address;
-  String description;
-  String history;
-  String feature;
+  final String title;
+  final List<String> image;
+  final String address;
+  final String description;
+  final String history;
+  final String feature;
 
   DetailPage({
     super.key,
@@ -125,7 +124,7 @@ class DetailPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Gallery',
+                  'Ảnh minh họa',
                   style: AppTextStyle.headLineStyle,
                 ),
                 SizedBox(
@@ -205,7 +204,7 @@ class DetailPage extends StatelessWidget {
                     vertical: 20,
                   ),
                   child: Text(
-                    'History',
+                    'Lịch sử',
                     style: AppTextStyle.headLineStyle,
                   ),
                 ),
@@ -218,7 +217,7 @@ class DetailPage extends StatelessWidget {
                     vertical: 20,
                   ),
                   child: Text(
-                    'Feature',
+                    'Đặc trưng',
                     style: AppTextStyle.headLineStyle,
                   ),
                 ),

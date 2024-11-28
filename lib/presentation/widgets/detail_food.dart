@@ -7,12 +7,11 @@ import 'package:ui_project/core/constant/button.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
 
-
 // ignore: must_be_immutable
 class DetailFoodPage extends StatefulWidget {
   String title;
   List<String> image;
-  List<String> address;
+  String address;
   String description;
   String history;
   String feature;
@@ -136,7 +135,7 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
                   ),
                 ),
                 Text(
-                  'Gallery',
+                  'Ảnh minh họa',
                   style: AppTextStyle.headLineStyle,
                 ),
                 SizedBox(
@@ -216,7 +215,7 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
                     vertical: 20,
                   ),
                   child: Text(
-                    'History',
+                    'Lịch sử',
                     style: AppTextStyle.headLineStyle,
                   ),
                 ),
@@ -229,7 +228,7 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
                     vertical: 20,
                   ),
                   child: Text(
-                    'Ingredients',
+                    'Nguyên liệu',
                     style: AppTextStyle.headLineStyle,
                   ),
                 ),
@@ -242,7 +241,7 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
                     vertical: 20,
                   ),
                   child: Text(
-                    'Feature',
+                    'Đặc trưng',
                     style: AppTextStyle.headLineStyle,
                   ),
                 ),
@@ -253,7 +252,7 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
               ],
             ),
           ),
-          MaterialButton(
+          ElevatedButton(
             onPressed: () {},
             child: Container(
               margin: EdgeInsets.symmetric(

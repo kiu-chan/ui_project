@@ -1,11 +1,17 @@
+
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:latlong2/latlong.dart';
+
 class FoodModel {
   List<String> image;
   String title;
-  List<String> address;
+  String address;
   String ingredients;
   String description;
   String history;
   String feature;
+  LatLng location;
   int isHot;
 
   FoodModel({
@@ -16,6 +22,7 @@ class FoodModel {
     required this.description,
     required this.history,
     required this.feature,
+    required this.location,
     required this.isHot,
   });
 
@@ -29,23 +36,17 @@ class FoodModel {
       imageList = List<String>.from(images);
     }
 
-    var address = json['address'];
-    List<String> addressList = [];
-
-    if (address is String) {
-      addressList = [address];
-    } else if (address is List) {
-      addressList = List<String>.from(address);
-    }
+    GeoPoint geoPoint = json['location'] ?? GeoPoint(0.0, 0.0);
 
     return FoodModel(
       image: imageList,
       title: json['title'] ?? '',
-      address: addressList,
+      address: json['address'],
       ingredients: json['ingredients'],
       description: json['description'] ?? '',
       history: json['history'] ?? '',
       feature: json['feature'] ?? '',
+      location: LatLng(geoPoint.latitude, geoPoint.longitude),
       isHot: json['isHot'] ?? 0,
     );
   }
