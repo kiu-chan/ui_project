@@ -1,0 +1,16 @@
+{
+  "home": "Home",
+  "map": "Map",
+  "settings": "Settings",
+  "language": "Language",
+  "english": "English",
+  "vietnamese": "tiếng Việt",
+
+  "login": "Login",
+  "loginSuccessful": "Login successful",
+  "username": "User name",
+  "pleaseEnterUsername": "Please enter user name",
+  "password": "Password",
+  "pleaseEnterPassword": "Please enter password",
+  "mapTitle": "Map"
+}

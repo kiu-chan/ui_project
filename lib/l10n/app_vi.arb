@@ -1,0 +1,16 @@
+{
+  "home": "Trang chủ",
+  "map": "Bản đồ",
+  "settings": "Cài đặt",
+  "language": "Ngôn ngữ",
+  "english": "English",
+  "vietnamese": "Tiếng Việt",
+
+  "login": "Đăng nhập",
+  "loginSuccessful": "Đăng nhập thành công",
+  "username": "Tên người dùng",
+  "pleaseEnterUsername": "Vui lòng nhập tên người dùng",
+  "password": "Mật khẩu",
+  "pleaseEnterPassword": "Vui lòng nhập mật khẩu",
+  "mapTitle": "Bản đồ"
+}
