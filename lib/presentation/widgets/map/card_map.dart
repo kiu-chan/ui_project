@@ -4,7 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
-import 'package:ui_project/presentation/widgets/marker.dart';
+import 'package:ui_project/presentation/widgets/map/marker.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CardMap extends StatelessWidget {
