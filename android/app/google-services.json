@@ -1,8 +1,9 @@
 {
   "project_info": {
     "project_number": "605157754958",
+    "firebase_url": "https://ui-project-81fe5-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "ui-project-81fe5",
-    "storage_bucket": "ui-project-81fe5.appspot.com"
+    "storage_bucket": "ui-project-81fe5.firebasestorage.app"
   },
   "client": [
     {
@@ -12,7 +13,12 @@
           "package_name": "com.example.ui_project"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "605157754958-q6c3tikh5kqn2ks5ehf12mg65uke03et.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBgl0ayV6OkJdxyKeXmVQ51H7jpb3DSek4"
@@ -20,7 +26,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "605157754958-q6c3tikh5kqn2ks5ehf12mg65uke03et.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
