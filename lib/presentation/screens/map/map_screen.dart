@@ -26,7 +26,7 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   final MapController _mapController = MapController();
   LatLng? _selectedLocation;
-
+  
   @override
   void initState() {
     super.initState();
@@ -46,7 +46,7 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: BlocBuilder<UserLocationCubit, MapState>(
         builder: (context, state) {
-          final LatLng initialCenter =
+          final LatLng initialCenter = 
               state.userLocation ?? const LatLng(21.0368973, 105.8320918);
 
           final bool isMapMoved = state.isMapMoved;
@@ -61,8 +61,8 @@ class _MapScreenState extends State<MapScreen> {
                   onPositionChanged: (MapCamera position, bool hasGesture) {
                     if (state.userLocation != null) {
                       context.read<UserLocationCubit>().onMapMoved(
-                            position.center != state.userLocation,
-                          );
+                        position.center != state.userLocation,
+                      );
                     }
                   },
                   onTap: (tapPosition, latLng) {
@@ -80,14 +80,7 @@ class _MapScreenState extends State<MapScreen> {
                       'id': 'mapbox/streets-v12',
                     },
                   ),
-                  CurrentLocationLayer(
-                    turnOnHeadingUpdate: TurnOnHeadingUpdate.never,
-                    style: const LocationMarkerStyle(
-                      marker: DefaultLocationMarker(),
-                      markerSize: Size(20, 20),
-                      markerDirection: MarkerDirection.heading,
-                    ),
-                  ),
+                  CurrentLocationLayer(), // Sử dụng CurrentLocationLayer đơn giản
                   MapLayers(selectedLocation: _selectedLocation),
                 ],
               ),
