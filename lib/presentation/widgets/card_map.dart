@@ -31,7 +31,7 @@ class CardMap extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return Container(
-              height: MediaQuery.sizeOf(context).height * 0.35,
+              height: MediaQuery.sizeOf(context).height * 0.38,
               margin: EdgeInsets.only(
                 bottom: MediaQuery.of(context).size.height * 0.12,
                 left: 15,
@@ -79,18 +79,19 @@ class CardMap extends StatelessWidget {
                     style: AppTextStyle.bodyStyle1,
                   ),
                   const SizedBox(
-                    height: 12,
+                    height: 12, 
                   ),
                   ElevatedButton(
                     style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all(
-                          AppColors.primaryColor,
+                      backgroundColor: WidgetStateProperty.all(
+                        AppColors.primaryColor,
+                      ),
+                      shape: WidgetStatePropertyAll(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
                         ),
-                        shape: WidgetStatePropertyAll(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        )),
+                      ),
+                    ),
                     onPressed: () async {
                       final Uri url = Uri.parse(
                           'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(title)}');
@@ -100,12 +101,11 @@ class CardMap extends StatelessWidget {
                         throw 'Could not launch $url';
                       }
                     },
-                    child: Text(
-                      'Đường đi',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Đường đi',
+                        style: AppTextStyle.buttonText,
                       ),
                     ),
                   ),

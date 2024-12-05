@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ui_project/core/constant/color.dart';
 
-
 sealed class AppTextStyle {
   static const appBarStyle = TextStyle(
     fontSize: 22,
@@ -32,7 +31,7 @@ sealed class AppTextStyle {
   );
 
   static const saved = TextStyle(
-    fontSize: 16, 
+    fontSize: 16,
     color: Colors.black,
     fontWeight: FontWeight.bold,
   );
@@ -42,4 +41,9 @@ sealed class AppTextStyle {
     color: AppColors.textColor,
   );
 
+  static const buttonText = TextStyle(
+    color: Colors.white,
+    fontWeight: FontWeight.bold,
+    fontSize: 18,
+  );
 }

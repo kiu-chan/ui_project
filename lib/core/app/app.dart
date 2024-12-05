@@ -16,6 +16,7 @@ import 'package:ui_project/application/map_cubit/map_cubit.dart';
 import 'package:ui_project/application/saved_cubit/saved_cultures_cubit.dart';
 import 'package:ui_project/application/saved_cubit/saved_destinations_cubit.dart';
 import 'package:ui_project/application/saved_cubit/saved_festivals_cubit.dart';
+import 'package:ui_project/application/step_screen_cubit/step_cubit.dart';
 import 'package:ui_project/application/theme_bloc/theme_bloc.dart';
 import 'package:ui_project/core/constant/theme.dart';
 import 'package:ui_project/data/repositories/home_repositories/cultures_repositories.dart';
@@ -90,6 +91,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => FoodMapCubit()..getPosition(),
+        ),
+        BlocProvider(
+          create: (context) => StepCubit(),
         ),
       ],
       child: BlocBuilder<ThemeBloc, ThemeMode>(
