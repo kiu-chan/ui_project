@@ -33,7 +33,7 @@ class DetailPage extends StatelessWidget {
           Stack(
             children: [
               CachedNetworkImage(
-                imageUrl: image[0],
+                imageUrl: image.isNotEmpty ? image[0] : '',
                 fit: BoxFit.cover,
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     Image.asset(
@@ -66,9 +66,7 @@ class DetailPage extends StatelessWidget {
                         ),
                         child: IconButton(
                           onPressed: () {},
-                          icon: SvgPicture.asset(
-                            AppAssets.BookMark,
-                          ),
+                          icon: SvgPicture.asset(AppAssets.BookMark),
                         ),
                       ),
                     ],
@@ -78,20 +76,13 @@ class DetailPage extends StatelessWidget {
             ],
           ),
           Container(
-            margin: EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
+            margin: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 15,
-                  ),
-                  child: Text(
-                    title,
-                    style: AppTextStyle.headStyle,
-                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  child: Text(title, style: AppTextStyle.headStyle),
                 ),
                 Row(
                   children: [
@@ -100,11 +91,8 @@ class DetailPage extends StatelessWidget {
                       width: 20,
                       height: 20,
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width * 0.8,
+                    const SizedBox(width: 10),
+                    Expanded(
                       child: Text(
                         address,
                         style: AppTextStyle.bodyStyle,
@@ -115,125 +103,58 @@ class DetailPage extends StatelessWidget {
                   ],
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 15,
+                  padding: EdgeInsets.symmetric(vertical: 15),
+                  child: Text(description, style: AppTextStyle.bodyStyle),
+                ),
+                Text('Ảnh minh họa', style: AppTextStyle.headLineStyle),
+                SizedBox(height: 20),
+                if (image.length >= 4) // Kiểm tra có đủ ảnh không
+                  SizedBox(
+                    height: 120,
+                    child: ListView(
+                      shrinkWrap: true,
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        for (int i = 1; i < 4; i++)
+                          Padding(
+                            padding: EdgeInsets.only(right: i < 3 ? 10 : 0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: CachedNetworkImage(
+                                imageUrl: image[i],
+                                fit: BoxFit.cover,
+                                progressIndicatorBuilder: (context, url, downloadProgress) =>
+                                    Image.asset(
+                                  AppAssets.Marker,
+                                  fit: BoxFit.cover,
+                                ),
+                                errorWidget: (context, url, error) => Image.asset(
+                                  AppAssets.Marker,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
-                  child: Text(
-                    description,
-                    style: AppTextStyle.bodyStyle,
-                  ),
-                ),
-                Text(
-                  'Ảnh minh họa',
-                  style: AppTextStyle.headLineStyle,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                SizedBox(
-                  height: 120,
-                  child: ListView(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.horizontal,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: CachedNetworkImage(
-                          imageUrl: image[1],
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Image.asset(
-                            AppAssets.Marker,
-                            fit: BoxFit.cover,
-                            height: 150,
-                            width: MediaQuery.sizeOf(context).width * 1,
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
-                            AppAssets.Marker,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: CachedNetworkImage(
-                          imageUrl: image[2],
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Image.asset(
-                            AppAssets.Marker,
-                            fit: BoxFit.cover,
-                            height: 150,
-                            width: MediaQuery.sizeOf(context).width * 1,
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
-                            AppAssets.Marker,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: 10,
-                      ),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: CachedNetworkImage(
-                          imageUrl: image[3],
-                          fit: BoxFit.cover,
-                          progressIndicatorBuilder:
-                              (context, url, downloadProgress) => Image.asset(
-                            AppAssets.Marker,
-                            fit: BoxFit.cover,
-                            height: 150,
-                            width: MediaQuery.sizeOf(context).width * 1,
-                          ),
-                          errorWidget: (context, url, error) => Image.asset(
-                            AppAssets.Marker,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20,
-                  ),
-                  child: Text(
-                    'Lịch sử',
-                    style: AppTextStyle.headLineStyle,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text('Lịch sử', style: AppTextStyle.headLineStyle),
                 ),
-                Text(
-                  history,
-                  style: AppTextStyle.bodyStyle,
-                ),
+                Text(history, style: AppTextStyle.bodyStyle),
                 Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 20,
-                  ),
-                  child: Text(
-                    'Đặc trưng',
-                    style: AppTextStyle.headLineStyle,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 20),
+                  child: Text('Đặc trưng', style: AppTextStyle.headLineStyle),
                 ),
-                Text(
-                  feature,
-                  style: AppTextStyle.bodyStyle,
-                ),
+                Text(feature, style: AppTextStyle.bodyStyle),
               ],
             ),
           ),
           MaterialButton(
             onPressed: () {},
             child: Container(
-              margin: EdgeInsets.symmetric(
-                vertical: 30,
-              ),
+              margin: EdgeInsets.symmetric(vertical: 30),
               width: MediaQuery.sizeOf(context).width * 1,
               padding: EdgeInsets.all(15),
               decoration: BoxDecoration(
@@ -252,9 +173,7 @@ class DetailPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.1,
-          ),
+          SizedBox(height: MediaQuery.sizeOf(context).height * 0.1),
         ],
       ),
     );

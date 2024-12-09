@@ -8,6 +8,9 @@ import 'package:ui_project/application/map_cubit/fes_map_cubit.dart';
 import 'package:ui_project/application/map_cubit/food_map_cubit.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/map/search_result.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:ui_project/core/constant/assets.dart';
+import 'package:ui_project/core/constant/textStyle.dart';
 
 class MapSearchBar extends StatefulWidget {
   final MapController mapController;
@@ -39,7 +42,7 @@ class _MapSearchBarState extends State<MapSearchBar> {
 
     final List<SearchResult> results = [];
     
-    // Tìm kiếm trong destinations
+    // Search in destinations
     final destinations = context.read<MapDesCubit>().state;
     results.addAll(destinations
         .where((dest) => dest.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -49,9 +52,10 @@ class _MapSearchBarState extends State<MapSearchBar> {
               address: dest.address,
               location: dest.location,
               type: 'Địa điểm du lịch',
+              image: dest.image[0],
             )));
 
-    // Tìm kiếm trong festivals
+    // Search in festivals
     final festivals = context.read<FesMapCubit>().state;
     results.addAll(festivals
         .where((fest) => fest.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -61,9 +65,10 @@ class _MapSearchBarState extends State<MapSearchBar> {
               address: fest.address,
               location: fest.location,
               type: 'Lễ hội',
+              image: fest.image[0],
             )));
 
-    // Tìm kiếm trong cultures
+    // Search in cultures
     final cultures = context.read<CultureMapCubit>().state;
     results.addAll(cultures
         .where((cult) => cult.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -73,9 +78,10 @@ class _MapSearchBarState extends State<MapSearchBar> {
               address: cult.address,
               location: cult.location,
               type: 'Văn hóa',
+              image: cult.image[0],
             )));
 
-    // Tìm kiếm trong foods
+    // Search in foods
     final foods = context.read<FoodMapCubit>().state;
     results.addAll(foods
         .where((food) => food.title.toLowerCase().contains(query.toLowerCase()) ||
@@ -85,6 +91,7 @@ class _MapSearchBarState extends State<MapSearchBar> {
               address: food.address,
               location: food.location,
               type: 'Ẩm thực',
+              image: food.image[0],
             )));
 
     setState(() {
@@ -165,7 +172,28 @@ class _MapSearchBarState extends State<MapSearchBar> {
               itemBuilder: (context, index) {
                 final result = _searchResults[index];
                 return ListTile(
-                  title: Text(result.title),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: result.image,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      progressIndicatorBuilder: (context, url, downloadProgress) =>
+                          Image.asset(
+                        AppAssets.Marker,
+                        fit: BoxFit.cover,
+                      ),
+                      errorWidget: (context, url, error) => Image.asset(
+                        AppAssets.Marker,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    result.title,
+                    style: AppTextStyle.headLineStyle,
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -176,7 +204,12 @@ class _MapSearchBarState extends State<MapSearchBar> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Text(result.address),
+                      Text(
+                        result.address,
+                        style: AppTextStyle.bodyStyle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ],
                   ),
                   onTap: () {
