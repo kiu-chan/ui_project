@@ -21,6 +21,7 @@ class SelectPageState extends State<SelectPage> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       color: AppColors.backGroundColor,
       home: PersistentTabView(
         onTabChanged: (value) {

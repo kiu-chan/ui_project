@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -27,17 +25,23 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
+  // Controller để điều khiển bản đồ
   final MapController _mapController = MapController();
+  
+  // Biến lưu trữ vị trí được chọn trên bản đồ
   LatLng? _selectedLocation;
+  
+  // Biến kiểm soát việc hiển thị danh sách địa điểm gần đây
   bool _showNearestLocations = false;
 
   @override
   void initState() {
     super.initState();
-    context.read<MapDesCubit>().getPosition();
-    context.read<FesMapCubit>().getPosition();
-    context.read<CultureMapCubit>().getPosition();
-    context.read<FoodMapCubit>().getPosition();
+    // Khởi tạo dữ liệu cho các layer trên bản đồ
+    context.read<MapDesCubit>().getPosition();    // Layer địa điểm du lịch
+    context.read<FesMapCubit>().getPosition();    // Layer lễ hội
+    context.read<CultureMapCubit>().getPosition(); // Layer văn hóa
+    context.read<FoodMapCubit>().getPosition();   // Layer ẩm thực
   }
 
   @override
@@ -50,13 +54,16 @@ class _MapScreenState extends State<MapScreen> {
       ),
       body: BlocBuilder<UserLocationCubit, MapState>(
         builder: (context, state) {
-          final LatLng initialCenter =
+          // Lấy vị trí mặc định hoặc vị trí hiện tại của người dùng
+          final LatLng initialCenter = 
               state.userLocation ?? const LatLng(21.0368973, 105.8320918);
 
+          // Kiểm tra xem bản đồ có đang được di chuyển không
           final bool isMapMoved = state.isMapMoved;
 
           return Stack(
             children: [
+              // Widget bản đồ chính
               FlutterMap(
                 mapController: _mapController,
                 options: MapOptions(
@@ -64,12 +71,14 @@ class _MapScreenState extends State<MapScreen> {
                   initialZoom: 15,
                   onPositionChanged: (position, bool? hasGesture) {
                     if (state.userLocation != null) {
+                      // Cập nhật trạng thái khi bản đồ di chuyển
                       context.read<UserLocationCubit>().onMapMoved(
                             position.center != state.userLocation,
                           );
                     }
                   },
                   onTap: (tapPosition, LatLng latLng) {
+                    // Reset trạng thái khi tap vào bản đồ
                     setState(() {
                       _selectedLocation = null;
                       _showNearestLocations = false;
@@ -77,6 +86,7 @@ class _MapScreenState extends State<MapScreen> {
                   },
                 ),
                 children: [
+                  // Layer bản đồ nền từ Mapbox
                   TileLayer(
                     urlTemplate:
                         'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
@@ -85,11 +95,14 @@ class _MapScreenState extends State<MapScreen> {
                       'id': 'mapbox/streets-v12',
                     },
                   ),
+                  // Layer hiển thị vị trí hiện tại
                   CurrentLocationLayer(),
+                  // Layer hiển thị các marker
                   MapLayers(selectedLocation: _selectedLocation),
                 ],
               ),
-              // Search Bar
+
+              // Thanh tìm kiếm
               Positioned(
                 top: 10,
                 left: 15,
@@ -104,7 +117,8 @@ class _MapScreenState extends State<MapScreen> {
                   },
                 ),
               ),
-              // Location Button
+
+              // Nút định vị
               Positioned(
                 bottom: MediaQuery.of(context).size.height * 0.1,
                 right: 15,
@@ -113,6 +127,7 @@ class _MapScreenState extends State<MapScreen> {
                   shape: const CircleBorder(),
                   onPressed: () {
                     if (state.userLocation != null) {
+                      // Di chuyển bản đồ đến vị trí hiện tại
                       _mapController.move(state.userLocation!, 15);
                       setState(() {
                         _selectedLocation = null;
@@ -127,16 +142,27 @@ class _MapScreenState extends State<MapScreen> {
                   ),
                 ),
               ),
-              // Nearest Locations List
+
+              // Danh sách địa điểm gần đây
+              // Thay đổi phần danh sách địa điểm gần đây trong MapScreen
               if (_showNearestLocations && state.userLocation != null)
                 Positioned(
                   bottom: 0,
                   left: 0,
                   right: 0,
                   child: Container(
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    color: Colors.white,
-                    child: NearestLocationsList(userLocation: state.userLocation!),
+                    // Thay đổi chiều cao thành 1/2 màn hình
+                    height: MediaQuery.of(context).size.height * 0.5, // Thay đổi từ 0.3 thành 0.5
+                    child: NearestLocationsList(
+                      userLocation: state.userLocation!,
+                      mapController: _mapController,
+                      onLocationSelected: (location) {
+                        setState(() {
+                          _selectedLocation = location;
+                          _showNearestLocations = false;
+                        });
+                      },
+                    ),
                   ),
                 ),
             ],
