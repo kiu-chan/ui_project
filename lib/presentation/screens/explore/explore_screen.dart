@@ -1,7 +1,10 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ui_project/core/constant/color.dart';
-import 'package:ui_project/presentation/screens/explore/post_screen.dart';
+import 'package:ui_project/core/constant/textStyle.dart';
+import 'package:ui_project/presentation/screens/explore/post_list.dart';
 import 'package:ui_project/presentation/screens/explore/saved_screen.dart';
 import 'package:ui_project/presentation/widgets/appbar_root.dart';
 
@@ -14,6 +17,7 @@ class ExploreScreen extends StatefulWidget {
 
 class _ExploreScreenState extends State<ExploreScreen> {
   int? selectedSegment = 1;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,10 +69,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 BoxShadow(
                   color: Colors.black.withOpacity(.15),
                   blurRadius: 4.0,
-                  offset: const Offset(
-                    0.0,
-                    1.0,
-                  ),
+                  offset: const Offset(0.0, 1.0),
                 ),
               ],
             ),
@@ -80,15 +81,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
               });
             },
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 15,
-              horizontal: 15,
-            ),
-          ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.75,
-            child: selectedSegment == 1 ? SaveScreen() : PostScreen(),
+          const SizedBox(height: 15),
+          Expanded(
+            child: selectedSegment == 1 ? SaveScreen() : PostListScreen(),
           ),
         ],
       ),
