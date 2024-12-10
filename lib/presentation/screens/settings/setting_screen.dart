@@ -4,6 +4,7 @@ import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/auth/login.dart';
+import 'package:ui_project/presentation/screens/settings/user_screen.dart';
 import 'package:ui_project/presentation/widgets/appbar_root.dart';
 import 'package:ui_project/presentation/widgets/list_settings.dart';
 
@@ -18,37 +19,61 @@ class SettingScreen extends StatelessWidget {
         title: 'Cài đặt',
       ),
       body: ListView(
-        physics: NeverScrollableScrollPhysics(),
-        padding: EdgeInsets.symmetric(
+        physics: const NeverScrollableScrollPhysics(),
+        padding: const EdgeInsets.symmetric(
           horizontal: 15,
         ),
         children: [
           ListSettings(
             leading: AppAssets.Person,
             title: 'Thông tin cá nhân',
-            onPressed: () {},
+            screen: const UserScreen(),
           ),
           ListSettings(
             leading: AppAssets.language,
             title: 'Ngôn ngữ',
-            onPressed: () {},
+            screen: const UserScreen(),
           ),
           ListSettings(
             leading: AppAssets.ThemeMode,
             title: 'Giao diện',
-          
-            onPressed: () {
-              
-            },
+            screen: const UserScreen(),
           ),
           ListTile(
-            onTap: () {
-              pushWithoutNavBar(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Login(),
-                ),
+            onTap: () async {
+              bool? confirmLogout = await showDialog<bool>(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Xác nhận đăng xuất'),
+                    content:
+                        const Text('Bạn có chắc chắn muốn đăng xuất không?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text('Hủy'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Đăng xuất'),
+                      ),
+                    ],
+                  );
+                },
               );
+
+              if (confirmLogout == true) {
+                pushWithoutNavBar(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const Login(),
+                  ),
+                );
+              }
             },
             leading: SvgPicture.asset(
               AppAssets.Logout,
@@ -57,7 +82,7 @@ class SettingScreen extends StatelessWidget {
               height: 20,
               width: 20,
             ),
-            title: Text(
+            title: const Text(
               'Đăng xuất',
               style: TextStyle(
                 color: Colors.red,
@@ -65,7 +90,7 @@ class SettingScreen extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

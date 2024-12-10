@@ -282,7 +282,7 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
-                    "Start a trip",
+                    "Tạo lịch trình",
                     style: AppTextStyle.buttonText,
                   ),
                 ),

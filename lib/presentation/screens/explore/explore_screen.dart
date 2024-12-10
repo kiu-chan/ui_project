@@ -1,7 +1,7 @@
 import 'package:custom_sliding_segmented_control/custom_sliding_segmented_control.dart';
 import 'package:flutter/material.dart';
 import 'package:ui_project/core/constant/color.dart';
-import 'package:ui_project/presentation/screens/explore/post_screen.dart';
+import 'package:ui_project/presentation/screens/explore/news_feed.dart';
 import 'package:ui_project/presentation/screens/explore/saved_screen.dart';
 import 'package:ui_project/presentation/widgets/appbar_root.dart';
 
@@ -88,7 +88,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
           ),
           SizedBox(
             height: MediaQuery.sizeOf(context).height * 0.75,
-            child: selectedSegment == 1 ? SaveScreen() : PostScreen(),
+            child: selectedSegment == 1 ? SaveScreen() : NewsfeedScreen(),
           ),
         ],
       ),

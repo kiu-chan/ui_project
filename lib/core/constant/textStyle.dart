@@ -46,4 +46,12 @@ sealed class AppTextStyle {
     fontWeight: FontWeight.bold,
     fontSize: 18,
   );
+
+  static const subUser = TextStyle(
+    fontWeight: FontWeight.normal,
+    color: Colors.black,
+    fontSize: 15,
+  );
+
+ 
 }

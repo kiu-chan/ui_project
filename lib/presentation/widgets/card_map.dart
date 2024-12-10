@@ -79,7 +79,7 @@ class CardMap extends StatelessWidget {
                     style: AppTextStyle.bodyStyle1,
                   ),
                   const SizedBox(
-                    height: 12, 
+                    height: 12,
                   ),
                   ElevatedButton(
                     style: ButtonStyle(
@@ -94,7 +94,7 @@ class CardMap extends StatelessWidget {
                     ),
                     onPressed: () async {
                       final Uri url = Uri.parse(
-                          'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(title)}');
+                          'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}');
 
                       if (!await launchUrl(url,
                           mode: LaunchMode.externalApplication)) {

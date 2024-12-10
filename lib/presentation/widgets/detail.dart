@@ -15,7 +15,7 @@ class DetailPage extends StatelessWidget {
   final String description;
   final String history;
   final String feature;
-
+  final Widget widget;
   DetailPage({
     super.key,
     required this.title,
@@ -24,6 +24,7 @@ class DetailPage extends StatelessWidget {
     required this.description,
     required this.history,
     required this.feature,
+    required this.widget,
   });
 
   @override
@@ -66,12 +67,7 @@ class DetailPage extends StatelessWidget {
                           color: Colors.white,
                           shape: BoxShape.circle,
                         ),
-                        child: IconButton(
-                          onPressed: () {},
-                          icon: SvgPicture.asset(
-                            AppAssets.BookMark,
-                          ),
-                        ),
+                        child: widget,
                       ),
                     ],
                   ),
@@ -257,7 +253,7 @@ class DetailPage extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
-                    "Start a trip",
+                    "Tạo lịch trình",
                     style: AppTextStyle.buttonText,
                   ),
                 ),

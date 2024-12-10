@@ -7,7 +7,8 @@ import 'package:ui_project/application/destinations_bloc/destnation_bloc.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/loading.dart';
 import 'package:ui_project/presentation/widgets/card_popular.dart';
-
+import '../../../../application/saved_cubit/saved_destinations_cubit.dart';
+import '../../../../data/models/Home/destinations_model.dart';
 import '../../../widgets/detail.dart';
 
 class PopularDestinationsScreen extends StatelessWidget {
@@ -43,6 +44,27 @@ class PopularDestinationsScreen extends StatelessWidget {
                               description: destination.description,
                               history: destination.history,
                               feature: destination.feature,
+                              widget: BlocBuilder<SavedDestinationsCubit,
+                                  List<DestinationsModels>>(
+                                builder: (context, state) {
+                                  final isSaved = state.any((item) =>
+                                      item.image == destination.image);
+                                  return IconButton(
+                                    onPressed: () {
+                                      context
+                                          .read<SavedDestinationsCubit>()
+                                          .toogleSave(
+                                            context,
+                                            destination,
+                                          );
+                                    },
+                                    icon: isSaved
+                                        ? SvgPicture.asset(
+                                            AppAssets.BookMarkFill)
+                                        : SvgPicture.asset(AppAssets.BookMark),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         );
@@ -68,7 +90,38 @@ class PopularDestinationsScreen extends StatelessWidget {
                           height: 20,
                         ),
                         destination.address,
-                        
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: BlocBuilder<SavedDestinationsCubit,
+                                List<DestinationsModels>>(
+                              builder: (context, state) {
+                                final isSaved = state.any(
+                                    (item) => item.image == destination.image);
+                                return IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<SavedDestinationsCubit>()
+                                        .toogleSave(
+                                          context,
+                                          destination,
+                                        );
+                                  },
+                                  icon: isSaved
+                                      ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                      : SvgPicture.asset(AppAssets.BookMark),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   );

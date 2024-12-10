@@ -7,6 +7,8 @@ import 'package:ui_project/application/foods_bloc/food_state.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/loading.dart';
 import 'package:ui_project/presentation/widgets/card_popular.dart';
+import '../../../../application/saved_cubit/saved_foods_cubit.dart';
+import '../../../../data/models/Home/food_model.dart';
 import '../../../widgets/detail.dart';
 
 class PopularFoodScreen extends StatelessWidget {
@@ -43,6 +45,24 @@ class PopularFoodScreen extends StatelessWidget {
                               description: foods.description,
                               history: foods.history,
                               feature: foods.feature,
+                              widget:
+                                  BlocBuilder<SavedFoodsCubit, List<FoodModel>>(
+                                builder: (context, state) {
+                                  final isSaved = state
+                                      .any((item) => item.image == foods.image);
+                                  return IconButton(
+                                    onPressed: () {
+                                      context
+                                          .read<SavedFoodsCubit>()
+                                          .toogleSave(context, foods);
+                                    },
+                                    icon: isSaved
+                                        ? SvgPicture.asset(
+                                            AppAssets.BookMarkFill)
+                                        : SvgPicture.asset(AppAssets.BookMark),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         );
@@ -68,6 +88,35 @@ class PopularFoodScreen extends StatelessWidget {
                           height: 20,
                         ),
                         foods.address,
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child:
+                                BlocBuilder<SavedFoodsCubit, List<FoodModel>>(
+                              builder: (context, state) {
+                                final isSaved = state
+                                    .any((item) => item.image == foods.image);
+                                return IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<SavedFoodsCubit>()
+                                        .toogleSave(context, foods);
+                                  },
+                                  icon: isSaved
+                                      ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                      : SvgPicture.asset(AppAssets.BookMark),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   );

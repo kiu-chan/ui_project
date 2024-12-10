@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ui_project/core/constant/assets.dart';
+import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/auth/register_page.dart';
 
 import 'package:ui_project/presentation/screens/select_screen.dart';
@@ -64,9 +66,10 @@ class _LoginState extends State<Login> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
-                  Icons.android,
-                  size: 100,
+                Image.asset(
+                  AppAssets.Marker,
+                  width: 100,
+                  height: 100,
                 ),
                 SizedBox(
                   height: 75,
@@ -128,6 +131,7 @@ class _LoginState extends State<Login> {
                   ),
                   child: TextField(
                     controller: _passwordController,
+                    obscureText: true,
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                         borderSide: BorderSide(
@@ -141,7 +145,7 @@ class _LoginState extends State<Login> {
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      hintText: 'Password',
+                      hintText: 'Mật khẩu',
                       fillColor: Colors.grey[200],
                       filled: true,
                     ),
@@ -159,14 +163,14 @@ class _LoginState extends State<Login> {
                   child: Container(
                     padding: EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: Colors.deepPurple,
+                      color: AppColors.primaryColor,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: GestureDetector(
                       onTap: SignIn,
                       child: Center(
                         child: Text(
-                          'Sign in',
+                          'Đăng nhập',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
@@ -186,7 +190,7 @@ class _LoginState extends State<Login> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Don\'t have an account?',
+                      'Bạn chưa có tài khoản?',
                       style: TextStyle(
                         color: Colors.black54,
                       ),
@@ -201,10 +205,10 @@ class _LoginState extends State<Login> {
                         );
                       },
                       child: Text(
-                        ' Register',
+                        ' Đăng ký',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple,
+                          color: AppColors.primaryColor,
                         ),
                       ),
                     ),

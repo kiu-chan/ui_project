@@ -1,6 +1,8 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_project/application/step_screen_cubit/step_state.dart';
+import 'package:ui_project/presentation/screens/home/start_trip/review_sumary.dart';
 
 class StepCubit extends Cubit<StepTripState> {
   StepCubit()
@@ -13,10 +15,24 @@ class StepCubit extends Cubit<StepTripState> {
 
   final int totalSteps = 3;
 
-  void nextStep() {
+  void nextStep(BuildContext context) {
     if (state.currentStep < totalSteps - 1) {
       emit(StepTripState(
           currentStep: state.currentStep + 1, isSelected: state.isSelected));
+    }
+    if (state.currentStep == 2) { 
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ReviewSummary(
+            image: '',
+            title: '',
+            date: '',
+            budget: '',
+            group: '',
+          ),
+        ),
+      );
     }
   }
 

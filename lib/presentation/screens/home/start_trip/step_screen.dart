@@ -86,7 +86,7 @@ class StepScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          context.read<StepCubit>().nextStep();
+                          context.read<StepCubit>().nextStep(context);
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),

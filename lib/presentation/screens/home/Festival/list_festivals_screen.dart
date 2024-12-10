@@ -20,7 +20,7 @@ class ListFestivalsScreen extends StatelessWidget {
     context.read<PopularFestivalBloc>().add(LoadedAllFestival());
     return Scaffold(
       appBar: CustomeAppbar(
-        title: 'Popular Festivals',
+        title: 'Lễ hội',
       ),
       body: BlocBuilder<PopularFestivalBloc, PopularFestivalState>(
           builder: (context, state) {
@@ -45,6 +45,23 @@ class ListFestivalsScreen extends StatelessWidget {
                         description: festivals.description,
                         history: festivals.history,
                         feature: festivals.feature,
+                        widget: BlocBuilder<SavedFestivalsCubit,
+                            List<FestivalModel>>(
+                          builder: (context, state) {
+                            final isSaved = state
+                                .any((item) => item.image == festivals.image);
+                            return IconButton(
+                              onPressed: () {
+                                context
+                                    .read<SavedFestivalsCubit>()
+                                    .toogleSave(context, festivals);
+                              },
+                              icon: isSaved
+                                  ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                  : SvgPicture.asset(AppAssets.BookMark),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   );

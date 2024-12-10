@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'dart:io';
-
-import 'package:ui_project/presentation/screens/explore/news_feed.dart';
+import '../../../core/constant/color.dart';
+import '../../../core/constant/textStyle.dart';
 
 class PostScreen extends StatefulWidget {
   @override
@@ -48,41 +49,105 @@ class _PostScreenState extends State<PostScreen> {
       _selectedImage = null;
     });
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NewsfeedScreen(),
-      ),
-    );
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Create Post")),
+      backgroundColor: AppColors.backGroundColor,
+      appBar: AppBar(
+        backgroundColor: AppColors.backGroundColor,
+        centerTitle: true,
+        title: Text(
+          'Tạo bài viết',
+          style: AppTextStyle.appBarStyle,
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
               controller: _contentController,
-              decoration: InputDecoration(labelText: "What's on your mind?"),
-              maxLines: 4,
-            ),
-            SizedBox(height: 10),
-            if (_selectedImage != null)
-              Image.file(_selectedImage!, height: 150, fit: BoxFit.cover),
-            SizedBox(height: 10),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: _pickImage,
-                  child: Text("Add Image"),
+              maxLines: 5,
+              style: const TextStyle(
+                color: Colors.black,
+              ),
+              decoration: InputDecoration(
+                hintText: "Có gì mới?",
+                hintStyle: const TextStyle(
+                  color: Color.fromARGB(255, 120, 120, 120),
                 ),
-                SizedBox(width: 10),
+                filled: true,
+                fillColor: Color.fromARGB(255, 240, 238, 238),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 12,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 240, 238, 238),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          LucideIcons.smile,
+                          color: AppColors.primaryColor,
+                        ),
+                        onPressed: () {},
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    if (_selectedImage != null)
+                      Image.file(_selectedImage!,
+                          height: 150, fit: BoxFit.cover),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 240, 238, 238),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(
+                          LucideIcons.image,
+                          color: AppColors.primaryColor,
+                        ),
+                        onPressed: () {
+                          _pickImage();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
                 ElevatedButton(
-                  onPressed: _uploadPost,
-                  child: Text("Post"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                  ),
+                  onPressed: () {
+                    _uploadPost();
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: const Text(
+                      "Đăng bài",
+                      style: AppTextStyle.buttonText,
+                    ),
+                  ),
                 ),
               ],
             ),

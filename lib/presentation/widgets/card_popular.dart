@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
 
-import '../../core/constant/assets.dart';
 
 Widget cardPopular(
   Widget image,
   String title,
   SvgPicture flag,
   String address,
+  Widget widget,
  
 ) {
   return SizedBox(
@@ -29,23 +29,7 @@ Widget cardPopular(
                   ),
             ),
             // save
-            Positioned(
-              top: 10,
-              right: 10,
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset(AppAssets.BookMark),
-                ),
-              ),
-            ),
-            
+            widget,
           ],
         ),
         const SizedBox(

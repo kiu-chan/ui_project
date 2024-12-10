@@ -5,6 +5,7 @@ import '../../core/constant/textStyle.dart';
 
 class AppbarRoot extends StatelessWidget implements PreferredSizeWidget {
   final String title;
+ 
   const AppbarRoot({
     super.key,
     required this.title,

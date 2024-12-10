@@ -23,7 +23,7 @@ class ListFoodsScreen extends StatelessWidget {
         );
     return Scaffold(
       appBar: CustomeAppbar(
-        title: 'Popular Foods',
+        title: 'Ẩm thực',
       ),
       body: BlocBuilder<PopularFoodBloc, PopularFoodState>(
           builder: (context, state) {
@@ -37,7 +37,7 @@ class ListFoodsScreen extends StatelessWidget {
               itemBuilder: (context, index) {
                 final foods = state.food[index];
                 return ListPage(
-                  address: foods.address[0],
+                  address: foods.address,
                   image: foods.image[0],
                   onPressed: () {
                     Navigator.push(
