@@ -8,6 +8,8 @@ import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/loading.dart';
 import 'package:ui_project/presentation/widgets/card_popular.dart';
 
+import '../../../../application/saved_cubit/saved_cultures_cubit.dart';
+import '../../../../data/models/Home/culture_model.dart';
 import '../../../widgets/detail.dart';
 
 class PopularCulturesScreen extends StatelessWidget {
@@ -43,6 +45,23 @@ class PopularCulturesScreen extends StatelessWidget {
                               description: cultures.description,
                               history: cultures.history,
                               feature: cultures.feature[0],
+                              widget:  BlocBuilder<SavedCulturesCubit, List<CultureModel>>(
+                        builder: (context, state) {
+                          final isSaved =
+                              state.any((item) => item.image == cultures.image);
+                          return IconButton(
+                            onPressed: () {
+                              context
+                                  .read<SavedCulturesCubit>()
+                                  .toggleSave(context, cultures);
+                              
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
                             ),
                           ),
                         );
@@ -68,7 +87,35 @@ class PopularCulturesScreen extends StatelessWidget {
                           height: 20,
                         ),
                         cultures.address,
-                        
+                        Positioned(
+                          top: 10,
+                          right: 10,
+                          child: Container(
+                            height: 40,
+                            width: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.circle,
+                            ),
+                            child: BlocBuilder<SavedCulturesCubit,
+                                List<CultureModel>>(
+                              builder: (context, state) {
+                                final isSaved = state.any(
+                                    (item) => item.image == cultures.image);
+                                return IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<SavedCulturesCubit>()
+                                        .toggleSave(context, cultures);
+                                  },
+                                  icon: isSaved
+                                      ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                      : SvgPicture.asset(AppAssets.BookMark),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   );

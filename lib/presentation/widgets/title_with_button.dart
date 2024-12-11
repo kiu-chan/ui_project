@@ -27,7 +27,7 @@ class TitleWithButton extends StatelessWidget {
           child: Row(
             children: [
               Text(
-                'View All',
+                'Tất cả',
                 style: AppTextStyle.viewAllStyle,
               ),
               SizedBox(

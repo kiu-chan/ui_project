@@ -20,7 +20,7 @@ class ListCulture extends StatelessWidget {
     context.read<PopularCulturesBloc>().add(LoadedAllCultures());
     return Scaffold(
       appBar: CustomeAppbar(
-        title: 'Popular Cultures',
+        title: 'Văn hóa',
       ),
       body: BlocBuilder<PopularCulturesBloc, PopularCultureState>(
         builder: (context, state) {
@@ -47,6 +47,23 @@ class ListCulture extends StatelessWidget {
                           description: culture.description,
                           history: culture.history,
                           feature: culture.feature[1],
+                          widget:  BlocBuilder<SavedCulturesCubit, List<CultureModel>>(
+                        builder: (context, state) {
+                          final isSaved =
+                              state.any((item) => item.image == culture.image);
+                          return IconButton(
+                            onPressed: () {
+                              context
+                                  .read<SavedCulturesCubit>()
+                                  .toggleSave(context, culture);
+                              
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
                         ),
                       ),
                     );

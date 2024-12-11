@@ -56,24 +56,6 @@ class ListPage extends StatelessWidget {
                   ),
                 ),
                 widget,
-                // Positioned(
-                //   top: 10,
-                //   right: 10,
-                //   child: Container(
-                //     height: 40,
-                //     width: 40,
-                //     decoration: BoxDecoration(
-                //       color: Colors.white,
-                //       shape: BoxShape.circle,
-                //     ),
-                //     child: IconButton(
-                //       onPressed: () {
-                //           onSaved;
-                //       },
-                //       icon: SvgPicture.asset(AppAssets.BookMark),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
             SizedBox(

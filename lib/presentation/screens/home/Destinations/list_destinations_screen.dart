@@ -20,7 +20,7 @@ class ListDestinationsScreen extends StatelessWidget {
     context.read<PopularDestnationBloc>().add(LoadedAllDestination());
 
     return Scaffold(
-      appBar: CustomeAppbar(title: 'Popular Destinations'),
+      appBar: CustomeAppbar(title: 'Điểm đến'),
       body: BlocBuilder<PopularDestnationBloc, PopularDestinationState>(
           builder: (contex, state) {
         if (state is PopularDestinationLoading) {
@@ -44,6 +44,26 @@ class ListDestinationsScreen extends StatelessWidget {
                         description: destinations.description,
                         history: destinations.history,
                         feature: destinations.feature,
+                        widget: BlocBuilder<SavedDestinationsCubit,
+                            List<DestinationsModels>>(
+                          builder: (context, state) {
+                            final isSaved = state.any(
+                                (item) => item.image == destinations.image);
+                            return IconButton(
+                              onPressed: () {
+                                context
+                                    .read<SavedDestinationsCubit>()
+                                    .toogleSave(
+                                      context,
+                                      destinations,
+                                    );
+                              },
+                              icon: isSaved
+                                  ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                  : SvgPicture.asset(AppAssets.BookMark),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   );

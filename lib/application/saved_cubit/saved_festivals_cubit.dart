@@ -16,7 +16,7 @@ class SavedFestivalsCubit extends Cubit<List<FestivalModel>> {
       emit([...state, items]);
       isSaved = true;
     }
-    final message = isSaved ? 'Saved!' : 'Unsaved!';
+    final message = isSaved ? 'Đã lưu!' : 'Bỏ lưu!';
     customSnackBar(context, message);
   }
 }

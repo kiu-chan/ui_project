@@ -2,10 +2,13 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/button.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
+
+import '../screens/home/start_trip/step_screen.dart';
 
 // ignore: must_be_immutable
 class DetailFoodPage extends StatefulWidget {
@@ -252,32 +255,39 @@ class _DetailFoodPageState extends State<DetailFoodPage> {
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () {},
-            child: Container(
-              margin: EdgeInsets.symmetric(
-                vertical: 30,
-              ),
-              width: MediaQuery.sizeOf(context).width * 1,
-              padding: EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                color: AppColors.primaryColor,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: Center(
-                child: Text(
-                  'Start a trip',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
+          Padding(
+            padding: EdgeInsets.only(
+              left: 16,
+              right: 16,
+              top: 20,
+              bottom: MediaQuery.sizeOf(context).height * 0.1,
+            ),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                ),
+                onPressed: () {
+                  pushWithoutNavBar(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => StepScreen(),
+                    ),
+                  );
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Text(
+                    "Tạo lịch trình",
+                    style: AppTextStyle.buttonText,
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: MediaQuery.sizeOf(context).height * 0.1,
           ),
         ],
       ),

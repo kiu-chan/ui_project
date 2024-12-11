@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
           children: [
             Search(),
             TitleWithButton(
-              title: 'Popular Destinations',
+              title: 'Các điểm đến phổ biến',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -55,7 +55,7 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             TitleWithButton(
-              title: 'Popular Festivals',
+              title: 'Các lễ hội phổ biến',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -73,7 +73,7 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             TitleWithButton(
-              title: 'Popular Foods',
+              title: 'Các món ăn phổ biến',
               onPressed: () {
                 Navigator.push(
                   context,
@@ -91,7 +91,7 @@ class HomePage extends StatelessWidget {
               height: 20,
             ),
             TitleWithButton(
-              title: 'Popular Cultures',
+              title: 'Các văn hóa phổ biến',
               onPressed: () {
                 Navigator.push(
                   context,

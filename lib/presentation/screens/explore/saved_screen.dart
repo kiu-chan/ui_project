@@ -22,7 +22,6 @@ class SaveScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           SavedDestinations(),
           SavedCultures(),
           SavedFestivals(),
@@ -42,11 +41,6 @@ class SavedDestinations extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SavedDestinationsCubit, List<DestinationsModels>>(
       builder: (context, state) {
-        if (state.isEmpty) {
-          return Center(
-            child: Text('No saved'),
-          );
-        }
         return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -67,6 +61,14 @@ class SavedDestinations extends StatelessWidget {
                       description: item.description,
                       history: item.history,
                       feature: item.feature[1],
+                      widget: IconButton(
+                        onPressed: () {
+                          context
+                              .read<SavedDestinationsCubit>()
+                              .toogleSave(context, item);
+                        },
+                        icon: SvgPicture.asset(AppAssets.BookMarkFill),
+                      ),
                     ),
                   ),
                 );
@@ -109,11 +111,6 @@ class SavedCultures extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SavedCulturesCubit, List<CultureModel>>(
       builder: (context, state) {
-        if (state.isEmpty) {
-          return Center(
-            child: Text('No saved'),
-          );
-        }
         return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -134,6 +131,14 @@ class SavedCultures extends StatelessWidget {
                       description: item.description,
                       history: item.history,
                       feature: item.feature[1],
+                      widget: IconButton(
+                        onPressed: () {
+                          context
+                              .read<SavedCulturesCubit>()
+                              .toggleSave(context, item);
+                        },
+                        icon: SvgPicture.asset(AppAssets.BookMarkFill),
+                      ),
                     ),
                   ),
                 );
@@ -176,11 +181,6 @@ class SavedFestivals extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SavedFestivalsCubit, List<FestivalModel>>(
       builder: (context, state) {
-        if (state.isEmpty) {
-          return Center(
-            child: Text('No saved'),
-          );
-        }
         return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -201,6 +201,14 @@ class SavedFestivals extends StatelessWidget {
                       description: item.description,
                       history: item.history,
                       feature: item.feature[1],
+                      widget: IconButton(
+                        onPressed: () {
+                          context
+                              .read<SavedFestivalsCubit>()
+                              .toogleSave(context, item);
+                        },
+                        icon: SvgPicture.asset(AppAssets.BookMarkFill),
+                      ),
                     ),
                   ),
                 );
@@ -243,11 +251,6 @@ class SavedFoods extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<SavedFoodsCubit, List<FoodModel>>(
       builder: (context, state) {
-        if (state.isEmpty) {
-          return Center(
-            child: Text('No saved'),
-          );
-        }
         return ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
@@ -255,7 +258,7 @@ class SavedFoods extends StatelessWidget {
           itemBuilder: (context, index) {
             final item = state[index];
             return ListPage(
-              address: item.address[0],
+              address: item.address,
               image: item.image[0],
               onPressed: () {
                 Navigator.push(
@@ -264,10 +267,18 @@ class SavedFoods extends StatelessWidget {
                     builder: (context) => DetailPage(
                       title: item.title,
                       image: item.image,
-                      address: item.address[0],
+                      address: item.address,
                       description: item.description,
                       history: item.history,
                       feature: item.feature[1],
+                      widget: IconButton(
+                        onPressed: () {
+                          context
+                              .read<SavedFoodsCubit>()
+                              .toogleSave(context, item);
+                        },
+                        icon: SvgPicture.asset(AppAssets.BookMarkFill),
+                      ),
                     ),
                   ),
                 );

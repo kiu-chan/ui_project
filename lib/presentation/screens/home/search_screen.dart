@@ -18,6 +18,14 @@ import '../../../application/festivals_bloc/festival_event.dart';
 import '../../../application/festivals_bloc/festival_state.dart';
 import '../../../application/foods_bloc/food_bloc.dart';
 import '../../../application/foods_bloc/food_state.dart';
+import '../../../application/saved_cubit/saved_cultures_cubit.dart';
+import '../../../application/saved_cubit/saved_destinations_cubit.dart';
+import '../../../application/saved_cubit/saved_festivals_cubit.dart';
+import '../../../application/saved_cubit/saved_foods_cubit.dart';
+import '../../../data/models/Home/culture_model.dart';
+import '../../../data/models/Home/destinations_model.dart';
+import '../../../data/models/Home/festival_model.dart';
+import '../../../data/models/Home/food_model.dart';
 import '../../widgets/detail.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -43,6 +51,8 @@ class _SearchScreenState extends State<SearchScreen> {
           .add(SearchCulturesEvent(query: query));
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -161,6 +171,24 @@ class SearchDestinations extends StatelessWidget {
                       description: destinations.description,
                       history: destinations.history,
                       feature: destinations.feature,
+                      widget: BlocBuilder<SavedDestinationsCubit,
+                          List<DestinationsModels>>(
+                        builder: (context, state) {
+                          final isSaved = state
+                              .any((item) => item.image == destinations.image);
+                          return IconButton(
+                            onPressed: () {
+                              context.read<SavedDestinationsCubit>().toogleSave(
+                                    context,
+                                    destinations,
+                                  );
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -217,6 +245,24 @@ class SearchFestivals extends StatelessWidget {
                       description: festival.description,
                       history: festival.history,
                       feature: festival.feature,
+                      widget:
+                          BlocBuilder<SavedFestivalsCubit, List<FestivalModel>>(
+                        builder: (context, state) {
+                          final isSaved =
+                              state.any((item) => item.image == festival.image);
+                          return IconButton(
+                            onPressed: () {
+                              context.read<SavedFestivalsCubit>().toogleSave(
+                                    context,
+                                    festival,
+                                  );
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -278,6 +324,22 @@ class SearchFoods extends StatelessWidget {
                       description: foods.description,
                       history: foods.history,
                       feature: foods.feature,
+                      widget: BlocBuilder<SavedFoodsCubit, List<FoodModel>>(
+                        builder: (context, state) {
+                          final isSaved =
+                              state.any((item) => item.image == foods.image);
+                          return IconButton(
+                            onPressed: () {
+                              context
+                                  .read<SavedFoodsCubit>()
+                                  .toogleSave(context, foods);
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -339,6 +401,23 @@ class SearchCultures extends StatelessWidget {
                       description: cultures.description,
                       history: cultures.history,
                       feature: cultures.feature[1],
+                      widget:
+                          BlocBuilder<SavedCulturesCubit, List<CultureModel>>(
+                        builder: (context, state) {
+                          final isSaved =
+                              state.any((item) => item.image == cultures.image);
+                          return IconButton(
+                            onPressed: () {
+                              context
+                                  .read<SavedCulturesCubit>()
+                                  .toggleSave(context, cultures);
+                            },
+                            icon: isSaved
+                                ? SvgPicture.asset(AppAssets.BookMarkFill)
+                                : SvgPicture.asset(AppAssets.BookMark),
+                          );
+                        },
+                      ),
                     ),
                   ),
                 );

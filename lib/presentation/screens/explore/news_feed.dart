@@ -1,65 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:ui_project/application/news_feed_bloc/news_feed_bloc.dart';
+import 'package:ui_project/application/news_feed_bloc/news_feed_state.dart';
+import 'package:ui_project/application/users_bloc/users_bloc.dart'; // Import UsersBloc
+import 'package:ui_project/application/users_bloc/users_state.dart';
+import 'package:ui_project/core/constant/color.dart';
+import 'package:ui_project/core/constant/loading.dart';
+import 'package:ui_project/presentation/screens/explore/post_screen.dart';
+import 'package:ui_project/presentation/widgets/card_newsfeed.dart';
 
 class NewsfeedScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Newsfeed")),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('Post')
-            .orderBy('timestamp', descending: true)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
+    return BlocBuilder<NewsFeedBloc, NewsFeedState>(builder: (context, state) {
+      if (state is NewsFeedLoading) {
+        return const Center(child: AppLoading.loading);
+      } else if (state is NewsFeedLoaded) {
+        return Stack(
+          children: [
+            ListView.builder(
+              itemCount: state.data.length,
+              itemBuilder: (context, index) {
+                final datas = state.data[index];
 
-          final posts = snapshot.data?.docs ?? [];
+                print(
+                    'Avatar: ${datas.avatar}, UserName: ${datas.userName}, Image: ${datas.imageUrl}, Time: ${datas.timestamp}, Content: ${datas.content}');
 
-          return ListView.builder(
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts[index].data() as Map<String, dynamic>;
-              return Card(
-                margin: EdgeInsets.all(10),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        post['userName'] ?? 'Anonymous',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(post['content'] ?? ''),
-                      if (post['imageUrl'] != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 10),
-                          child: Image.network(post['imageUrl']),
-                        ),
-                      SizedBox(height: 5),
-                      Text(
-                        post['timestamp'] != null
-                            ? (post['timestamp'] as Timestamp)
-                                .toDate()
-                                .toString()
-                            : '',
-                        style: TextStyle(color: Colors.grey, fontSize: 12),
-                      ),
-                    ],
-                  ),
+                return CardNewsfeed(
+                  avatar: datas.avatar,
+                  userName: datas.userName,
+                  image: datas.imageUrl,
+                  time: datas.timestamp,
+                  content: datas.content,
+                );
+              },
+            ),
+            Positioned(
+              bottom: MediaQuery.of(context).size.height * 0.1,
+              right: 25,
+              child: FloatingActionButton(
+                backgroundColor: AppColors.primaryColor,
+                shape: const CircleBorder(),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => PostScreen(),
+                    ),
+                  );
+                },
+                child: Icon(
+                  LucideIcons.plus,
+                  size: 25,
+                  color: Colors.white,
                 ),
-              );
-            },
-          );
-        },
-      ),
-    );
+              ),
+            ),
+          ],
+        );
+      } else if (state is NewsFeedError) {
+        return Center(child: Text(state.message));
+      } else {
+        return const Center(
+          child: Text('No data'),
+        );
+      }
+    });
   }
 }

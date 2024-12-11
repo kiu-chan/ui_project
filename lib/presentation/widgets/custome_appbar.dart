@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
-import '../screens/home/search_page.dart';
+import 'package:ui_project/presentation/screens/home/search_screen.dart';
+
 
 class CustomeAppbar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
@@ -31,7 +32,7 @@ class CustomeAppbar extends StatelessWidget implements PreferredSizeWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => SearchPage(),
+                builder: (context) => SearchScreen(),
               ),
             );
           },
