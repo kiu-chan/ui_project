@@ -17,6 +17,7 @@ class DetailPage extends StatelessWidget {
   final String history;
   final String feature;
   final Widget? widget;
+  
   DetailPage({
     super.key,
     required this.title,
@@ -34,17 +35,20 @@ class DetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Hero Image Section
           Stack(
             children: [
               CachedNetworkImage(
                 imageUrl: image.isNotEmpty ? image[0] : '',
                 fit: BoxFit.cover,
+                height: 250, // Increased height for better visual impact
+                width: MediaQuery.sizeOf(context).width,
                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                     Image.asset(
                   AppAssets.Marker,
                   fit: BoxFit.cover,
-                  height: 150,
-                  width: MediaQuery.sizeOf(context).width * 1,
+                  height: 250,
+                  width: MediaQuery.sizeOf(context).width,
                 ),
                 errorWidget: (context, url, error) => Image.asset(
                   AppAssets.Marker,
@@ -53,9 +57,7 @@ class DetailPage extends StatelessWidget {
               ),
               SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -76,11 +78,13 @@ class DetailPage extends StatelessWidget {
               ),
             ],
           ),
+
           Container(
             margin: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title and Address Section
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 15),
                   child: Text(title, style: AppTextStyle.headStyle),
@@ -103,13 +107,18 @@ class DetailPage extends StatelessWidget {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                  child: Text(description, style: AppTextStyle.bodyStyle),
-                ),
+                
+                const Divider(height: 30, thickness: 1),
+                
+                // Description Section
+                Text(description, style: AppTextStyle.bodyStyle),
+                
+                const Divider(height: 30, thickness: 1),
+                
+                // Gallery Section
                 Text('Ảnh minh họa', style: AppTextStyle.headLineStyle),
                 SizedBox(height: 20),
-                if (image.length >= 4) // Kiểm tra có đủ ảnh không
+                if (image.length >= 4)
                   SizedBox(
                     height: 120,
                     child: ListView(
@@ -123,6 +132,7 @@ class DetailPage extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                               child: CachedNetworkImage(
                                 imageUrl: image[i],
+                                width: 160, // Fixed width for consistent look
                                 fit: BoxFit.cover,
                                 progressIndicatorBuilder: (context, url, downloadProgress) =>
                                     Image.asset(
@@ -139,25 +149,41 @@ class DetailPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text('Lịch sử', style: AppTextStyle.headLineStyle),
-                ),
+                
+                const Divider(height: 30, thickness: 1),
+                
+                // History Section
+                Text('Lịch sử', style: AppTextStyle.headLineStyle),
+                SizedBox(height: 10),
                 Text(history, style: AppTextStyle.bodyStyle),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20),
-                  child: Text('Đặc trưng', style: AppTextStyle.headLineStyle),
-                ),
+                
+                const Divider(height: 30, thickness: 1),
+                
+                // Feature Section
+                Text('Đặc trưng', style: AppTextStyle.headLineStyle),
+                SizedBox(height: 10),
                 Text(feature, style: AppTextStyle.bodyStyle),
               ],
             ),
           ),
-          Padding(
+
+          // Bottom Button
+          Container(
             padding: EdgeInsets.only(
               left: 16,
               right: 16,
               top: 20,
               bottom: MediaQuery.sizeOf(context).height * 0.1,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: Offset(0, -5),
+                ),
+              ],
             ),
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
@@ -167,9 +193,10 @@ class DetailPage extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(25),
                   ),
+                  padding: EdgeInsets.symmetric(vertical: 15),
                 ),
                 onPressed: () {
-                  TripDataManager().setDestination(title, image[0]);  // Lưu thông tin điểm đến
+                  TripDataManager().setDestination(title, image[0]);
                   pushWithoutNavBar(
                     context,
                     MaterialPageRoute(
@@ -177,12 +204,9 @@ class DetailPage extends StatelessWidget {
                     ),
                   );
                 },
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    "Tạo lịch trình",
-                    style: AppTextStyle.buttonText,
-                  ),
+                child: Text(
+                  "Tạo lịch trình",
+                  style: AppTextStyle.buttonText,
                 ),
               ),
             ),
