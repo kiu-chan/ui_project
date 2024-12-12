@@ -7,7 +7,6 @@ class StepTripState {
     required this.isSelected,
   });
 
-  // Create a copy with updated fields for immutability
   StepTripState copyWith({
     int? currentStep,
     List<bool>? isSelected,

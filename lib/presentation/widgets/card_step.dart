@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_project/application/step_screen_cubit/step_cubit.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
+import 'package:ui_project/presentation/screens/home/start_trip/trip_data_manager.dart';
 import '../../application/step_screen_cubit/step_state.dart';
 
 class CardStep extends StatelessWidget {
@@ -26,6 +27,8 @@ class CardStep extends StatelessWidget {
         return GestureDetector(
           onTap: () {
             context.read<StepCubit>().toggleSelection(index);
+            // Lưu thông tin nhóm khi người dùng chọn
+            TripDataManager().setGroup(title); // title là loại nhóm được chọn (một mình, gia đình...)
           },
           child: SizedBox(
             width: MediaQuery.sizeOf(context).width * 1,

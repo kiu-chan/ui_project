@@ -1,27 +1,51 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
-import 'package:ui_project/presentation/screens/home/home_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ui_project/core/constant/assets.dart';
+import 'package:ui_project/core/constant/color.dart';
+import 'package:ui_project/core/constant/textStyle.dart';
+import 'package:ui_project/presentation/screens/home/start_trip/trip_data_manager.dart';
 import 'package:ui_project/presentation/screens/select_screen.dart';
-import '../../../../core/constant/assets.dart';
-import '../../../../core/constant/color.dart';
-import '../../../../core/constant/textStyle.dart';
 
 class ReviewSummary extends StatelessWidget {
-  final String image;
-  final String title;
-  final String date;
-  final String group;
-  final String budget;
+  ReviewSummary({super.key});
 
-  const ReviewSummary({
-    super.key,
-    required this.image,
-    required this.title,
-    required this.date,
-    required this.group,
-    required this.budget,
-  });
+  final tripData = TripDataManager();
+
+  Future<void> saveTripToFirestore() async {
+    try {
+      final firestore = FirebaseFirestore.instance;
+      final currentUser = FirebaseAuth.instance.currentUser;
+      
+      if (currentUser == null) {
+        throw Exception('Người dùng chưa đăng nhập');
+      }
+
+      final tripRef = firestore
+          .collection('trips')
+          .doc(currentUser.uid)
+          .collection('userTrips');
+
+      await tripRef.add({
+        'destination': tripData.destination,
+        'group': tripData.group,
+        'date': tripData.date,
+        'budget': tripData.budget,
+        'imageUrl': tripData.imageUrl,
+        'createdAt': FieldValue.serverTimestamp(),
+        'status': 'planned',
+        'userId': currentUser.uid,
+      });
+
+      // Clear data sau khi lưu thành công
+      tripData.clear();
+      
+    } catch (e) {
+      print('Lỗi khi lưu chuyến đi: $e');
+      rethrow;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,162 +55,37 @@ class ReviewSummary extends StatelessWidget {
         backgroundColor: AppColors.backGroundColor,
         centerTitle: true,
         title: Text(
-          'Lịch trình',
+          'Xem lại lịch trình',
           style: AppTextStyle.appBarStyle,
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 15,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Icon(LucideIcons.mapPin),
-                  const SizedBox(
-                    width: 12,
+              ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: CachedNetworkImage(
+                  imageUrl: tripData.imageUrl,
+                  width: double.infinity,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => const Center(
+                    child: CircularProgressIndicator(),
                   ),
-                  Text(
-                    'Điểm đến',
-                    style: AppTextStyle.headLineStyle,
-                  ),
-                ],
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                ),
               ),
-              const SizedBox(
-                height: 12,
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(
-                      left: 38,
-                      right: 30,
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: CachedNetworkImage(
-                        imageUrl:
-                            'https://bois.com.vn/wp-content/uploads/2023/12/Kien-truc-pho-co-Ha-Noi-hien-nay.jpg',
-                        fit: BoxFit.cover,
-                        width: 150,
-                        height: 100,
-                        progressIndicatorBuilder:
-                            (context, url, downloadProgress) => Image.asset(
-                          AppAssets.Marker,
-                          fit: BoxFit.cover,
-                        ),
-                        errorWidget: (context, url, error) => Image.asset(
-                          AppAssets.Marker,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Text(
-                    'Phố cổ',
-                    style: AppTextStyle.bodyStyle,
-                  ),
-                ],
-              ),
-              Divider(
-                thickness: 0.5,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Icon(LucideIcons.user),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  Text(
-                    'Đi với',
-                    style: AppTextStyle.headLineStyle,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 12,
-              ),
+              const SizedBox(height: 20),
+              _buildInfoSection('Điểm đến:', tripData.destination),
+              _buildInfoSection('Ngày đi:', tripData.date),
+              _buildInfoSection('Nhóm:', tripData.group),
+              _buildInfoSection('Ngân sách:', tripData.budget),
+              const SizedBox(height: 40),
               Padding(
-                padding: EdgeInsets.only(
-                  left: 38,
-                ),
-                child: Text(
-                  'Một mình 👤',
-                  style: AppTextStyle.bodyStyle,
-                ),
-              ),
-              Divider(
-                thickness: 0.5,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Icon(LucideIcons.calendar),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  Text(
-                    'Ngày đi',
-                    style: AppTextStyle.headLineStyle,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 38,
-                ),
-                child: Text(
-                  '12/09/2024',
-                  style: AppTextStyle.bodyStyle,
-                ),
-              ),
-              Divider(
-                thickness: 0.5,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Icon(LucideIcons.circleDollarSign),
-                  const SizedBox(
-                    width: 12,
-                  ),
-                  Text(
-                    'Tài chính',
-                    style: AppTextStyle.headLineStyle,
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 12,
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: 38,
-                ),
-                child: Text(
-                  'Giá rẻ 💰',
-                  style: AppTextStyle.bodyStyle,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  bottom: 10,
-                  top: 220,
-                ),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
@@ -196,16 +95,47 @@ class ReviewSummary extends StatelessWidget {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.push(
+                    onPressed: () async {
+                      try {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
+                        );
+
+                        await saveTripToFirestore();
+
+                        Navigator.of(context).pop();
+                        
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Đã lưu lịch trình thành công'),
+                          ),
+                        );
+
+                        Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => SelectPage()));
+                            builder: (context) => const SelectPage(),
+                          ),
+                        );
+                      } catch (e) {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Không thể lưu lịch trình: $e'),
+                          ),
+                        );
+                      }
                     },
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Text(
-                        "Lưu",
+                        "Lưu lịch trình",
                         style: AppTextStyle.buttonText,
                       ),
                     ),
@@ -215,6 +145,32 @@ class ReviewSummary extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoSection(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 100,
+            child: Text(
+              label,
+              style: AppTextStyle.bodyStyle.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              style: AppTextStyle.bodyStyle,
+            ),
+          ),
+        ],
       ),
     );
   }

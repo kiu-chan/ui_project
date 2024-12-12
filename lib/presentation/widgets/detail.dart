@@ -6,6 +6,7 @@ import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/button.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/core/constant/textStyle.dart';
+import 'package:ui_project/presentation/screens/home/start_trip/trip_data_manager.dart';
 import '../screens/home/start_trip/step_screen.dart';
 
 class DetailPage extends StatelessWidget {
@@ -168,6 +169,7 @@ class DetailPage extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
+                  TripDataManager().setDestination(title, image[0]);  // Lưu thông tin điểm đến
                   pushWithoutNavBar(
                     context,
                     MaterialPageRoute(

@@ -8,6 +8,7 @@ import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/auth/login.dart';
 import 'package:ui_project/presentation/screens/settings/profile/profile_dialog.dart';
+import 'package:ui_project/presentation/screens/settings/trips_screen.dart';
 import 'package:ui_project/presentation/screens/settings/user_screen.dart';
 import 'package:ui_project/presentation/widgets/list_settings.dart';
 
@@ -97,9 +98,9 @@ class _SettingScreenState extends State<SettingScreen> {
               screen: Container(),
             ),
             ListSettings(
-              leading: AppAssets.ThemeMode,
-              title: 'Giao diện',
-              screen: Container(),
+              leading: AppAssets.language, // Thêm icon calendar vào AppAssets
+              title: 'Lịch trình của tôi',
+              screen: TripsScreen(),
             ),
             ListTile(
               onTap: () async {
