@@ -13,6 +13,61 @@ import 'package:ui_project/presentation/screens/home/Food/popular_food_screen.da
 import 'package:ui_project/presentation/widgets/title_with_button.dart';
 import 'package:ui_project/presentation/widgets/search_bar.dart';
 
+class CategoryButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const CategoryButton({
+    Key? key,
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(15),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.2),
+                  spreadRadius: 1,
+                  blurRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Icon(
+              icon,
+              size: 30,
+              color: AppColors.primaryColor,
+            ),
+          ),
+          SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -22,7 +77,6 @@ class HomePage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: AppColors.backGroundColor,
-        leading: Image.asset(AppAssets.Marker),
         title: Text(
           'HanoiVibe',
           style: AppTextStyle.appBarStyle,
@@ -30,12 +84,88 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 15,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 15),
         child: ListView(
           children: [
             Search(),
+            SizedBox(height: 5),
+            
+            // Categories
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Text(
+                      'Danh mục',
+                      style: AppTextStyle.headLineStyle.copyWith(
+                        fontSize: AppTextStyle.headLineStyle.fontSize != null 
+                            ? AppTextStyle.headLineStyle.fontSize! * 1.5
+                            : 32, // giá trị mặc định nếu fontSize ban đầu không tồn tại
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      CategoryButton(
+                        icon: Icons.place,
+                        label: 'Địa điểm',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListDestinationsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      CategoryButton(
+                        icon: Icons.event,
+                        label: 'Sự kiện',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListFestivalsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      CategoryButton(
+                        icon: Icons.restaurant_menu,
+                        label: 'Ẩm thực',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListFoodsScreen(),
+                            ),
+                          );
+                        },
+                      ),
+                      CategoryButton(
+                        icon: Icons.brush,
+                        label: 'Nghệ thuật',
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ListCulture(),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            
+            SizedBox(height: 20),
             TitleWithButton(
               title: 'Các điểm đến phổ biến',
               onPressed: () {
@@ -47,13 +177,10 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             PopularDestinationsScreen(),
-            SizedBox(
-              height: 20,
-            ),
+            
+            SizedBox(height: 20),
             TitleWithButton(
               title: 'Các lễ hội phổ biến',
               onPressed: () {
@@ -65,13 +192,10 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             PopularFestivalScreen(),
-            SizedBox(
-              height: 20,
-            ),
+            
+            SizedBox(height: 20),
             TitleWithButton(
               title: 'Các món ăn phổ biến',
               onPressed: () {
@@ -83,13 +207,10 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             PopularFoodScreen(),
-            SizedBox(
-              height: 20,
-            ),
+            
+            SizedBox(height: 20),
             TitleWithButton(
               title: 'Các văn hóa phổ biến',
               onPressed: () {
@@ -101,9 +222,7 @@ class HomePage extends StatelessWidget {
                 );
               },
             ),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             PopularCulturesScreen(),
           ],
         ),
