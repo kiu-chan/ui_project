@@ -38,13 +38,74 @@ class ReviewSummary extends StatelessWidget {
         'userId': currentUser.uid,
       });
 
-      // Clear data sau khi lưu thành công
       tripData.clear();
       
     } catch (e) {
       print('Lỗi khi lưu chuyến đi: $e');
       rethrow;
     }
+  }
+
+  void _showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Column(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 50,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Tạo lịch trình thành công!',
+                textAlign: TextAlign.center,
+                style: AppTextStyle.headStyle.copyWith(
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Lịch trình của bạn đã được lưu thành công. Bạn có thể xem và quản lý nó trong danh sách các chuyến đi của mình.',
+            textAlign: TextAlign.center,
+            style: AppTextStyle.bodyStyle,
+          ),
+          actions: [
+            Center(
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryColor,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  minimumSize: Size(200, 45),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close dialog
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const SelectPage(),
+                    ),
+                  );
+                },
+                child: Text(
+                  'Đồng ý',
+                  style: AppTextStyle.buttonText,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -108,23 +169,12 @@ class ReviewSummary extends StatelessWidget {
                         );
 
                         await saveTripToFirestore();
-
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(); // Đóng loading dialog
                         
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Đã lưu lịch trình thành công'),
-                          ),
-                        );
+                        _showSuccessDialog(context);
 
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const SelectPage(),
-                          ),
-                        );
                       } catch (e) {
-                        Navigator.of(context).pop();
+                        Navigator.of(context).pop(); // Đóng loading dialog
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('Không thể lưu lịch trình: $e'),
