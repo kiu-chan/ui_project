@@ -8,6 +8,7 @@ import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/auth/login.dart';
 import 'package:ui_project/presentation/screens/settings/profile/profile_dialog.dart';
+import 'package:ui_project/presentation/screens/settings/user_screen.dart';
 import 'package:ui_project/presentation/widgets/list_settings.dart';
 
 class SettingScreen extends StatefulWidget {
@@ -88,7 +89,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ListSettings(
               leading: AppAssets.Person,
               title: 'Thông tin cá nhân',
-              screen: ProfileDialog(userData: userData),
+              screen: UserScreen(userData: userData),
             ),
             ListSettings(
               leading: AppAssets.language,
