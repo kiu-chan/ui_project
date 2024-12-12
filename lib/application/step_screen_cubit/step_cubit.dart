@@ -18,6 +18,16 @@ class StepCubit extends Cubit<StepTripState> {
 
   void nextStep(BuildContext context) {
     if (state.currentStep < totalSteps - 1) {
+      // Check if any option is selected in the current step
+      bool hasSelection = state.isSelected.contains(true);
+      if (!hasSelection && state.currentStep != 1) { // Skip check for date picker step
+        // Show a message that user needs to make a selection
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vui lòng chọn một tùy chọn')),
+        );
+        return;
+      }
+
       // Xác định số lượng options cho bước tiếp theo
       int nextStepOptions = getOptionsCountForStep(state.currentStep + 1);
       
@@ -25,8 +35,16 @@ class StepCubit extends Cubit<StepTripState> {
         currentStep: state.currentStep + 1,
         isSelected: List.generate(nextStepOptions, (_) => false),
       ));
-    }
-    if (state.currentStep == 2) {
+    } else if (state.currentStep == totalSteps - 1) {
+      // Check if budget is selected before proceeding to review
+      bool hasBudgetSelection = state.isSelected.contains(true);
+      if (!hasBudgetSelection) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Vui lòng chọn ngân sách')),
+        );
+        return;
+      }
+      
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -45,8 +63,7 @@ class StepCubit extends Cubit<StepTripState> {
         currentStep: state.currentStep - 1,
         isSelected: List.generate(prevStepOptions, (_) => false),
       ));
-    }
-    if (state.currentStep == 0) {
+    } else {
       Navigator.pop(context);
     }
   }
@@ -71,7 +88,6 @@ class StepCubit extends Cubit<StepTripState> {
     return state.isSelected[index];
   }
 
-  // Helper method để xác định số lượng options cho mỗi bước
   int getOptionsCountForStep(int step) {
     switch (step) {
       case 0: // Group options
