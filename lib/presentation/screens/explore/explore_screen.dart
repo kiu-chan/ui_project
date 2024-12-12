@@ -21,13 +21,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backGroundColor,
-      appBar: AppbarRoot(
-        title: 'Khám phá',
-      ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+        SizedBox(
+          height: 50,
+        ),
           CustomSlidingSegmentedControl<int>(
             fixedWidth: MediaQuery.sizeOf(context).width * 0.45,
             initialValue: selectedSegment,

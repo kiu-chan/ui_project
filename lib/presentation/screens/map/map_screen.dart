@@ -50,9 +50,6 @@ class _MapScreenState extends State<MapScreen> {
     final mapConfig = MapConfig();
 
     return Scaffold(
-      appBar: AppbarRoot(
-        title: 'Bản đồ',
-      ),
       body: BlocBuilder<UserLocationCubit, MapState>(
         builder: (context, state) {
           // Lấy vị trí mặc định hoặc vị trí hiện tại của người dùng
@@ -102,20 +99,23 @@ class _MapScreenState extends State<MapScreen> {
                   MapLayers(selectedLocation: _selectedLocation),
                 ],
               ),
-
               // Thanh tìm kiếm
+              // In MapScreen widget
               Positioned(
-                top: 10,
+                // Adjust top padding to account for status bar and app padding
+                top: 5, // Add safe area padding
                 left: 15,
                 right: 15,
-                child: MapSearchBar(
-                  mapController: _mapController,
-                  onLocationSelected: (location) {
-                    setState(() {
-                      _selectedLocation = location;
-                      _showNearestLocations = false;
-                    });
-                  },
+                child: SafeArea( // Wrap in SafeArea for proper padding
+                  child: MapSearchBar(
+                    mapController: _mapController,
+                    onLocationSelected: (location) {
+                      setState(() {
+                        _selectedLocation = location;
+                        _showNearestLocations = false;
+                      });
+                    },
+                  ),
                 ),
               ),
 
