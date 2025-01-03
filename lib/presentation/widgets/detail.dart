@@ -10,7 +10,7 @@ import 'package:ui_project/core/constant/textStyle.dart';
 import 'package:ui_project/presentation/screens/home/start_trip/trip_data_manager.dart';
 import '../screens/home/start_trip/step_screen.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends StatefulWidget {
   final String title;
   final List<String> image;
   final String address;
@@ -18,9 +18,9 @@ class DetailPage extends StatelessWidget {
   final String history;
   final String feature;
   final Widget? widget;
-  
-  DetailPage({
-    super.key,
+
+  const DetailPage({
+    Key? key,
     required this.title,
     required this.image,
     required this.address,
@@ -28,199 +28,378 @@ class DetailPage extends StatelessWidget {
     required this.history,
     required this.feature,
     this.widget,
-  });
+  }) : super(key: key);
+
+  @override
+  State<DetailPage> createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> with SingleTickerProviderStateMixin {
+  late ScrollController _scrollController;
+  late AnimationController _animationController;
+  bool _showTitle = false;
+  final _imageHeight = 300.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = ScrollController()
+      ..addListener(() {
+        setState(() {
+          _showTitle = _scrollController.offset > _imageHeight - kToolbarHeight;
+        });
+      });
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  Widget _buildAppBar() {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      color: _showTitle ? Colors.white : Colors.transparent,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            _buildBackButton(),
+            if (_showTitle)
+              Expanded(
+                child: Text(
+                  widget.title,
+                  style: AppTextStyle.headLineStyle.copyWith(fontSize: 18),
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            Container(
+              height: 40,
+              width: 40,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: widget.widget ?? const SizedBox(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton() {
+    return Container(
+      height: 40,
+      width: 40,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: back(),
+    );
+  }
+
+  Widget _buildImageSection() {
+    return SizedBox(
+      height: _imageHeight,
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Hero(
+            tag: 'destination_${widget.title}',
+            child: CachedNetworkImage(
+              imageUrl: widget.image.isNotEmpty ? widget.image[0] : '',
+              fit: BoxFit.cover,
+              placeholder: (context, url) => Image.asset(
+                AppAssets.Marker,
+                fit: BoxFit.cover,
+              ),
+              errorWidget: (context, url, error) => Image.asset(
+                AppAssets.Marker,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black.withOpacity(0.4),
+                  Colors.transparent,
+                  Colors.black.withOpacity(0.4),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGallerySection() {
+    if (widget.image.length < 4) return const SizedBox();
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Ảnh minh họa', style: AppTextStyle.headLineStyle),
+        const SizedBox(height: 16),
+        SizedBox(
+          height: 140,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: widget.image.length - 1,
+            itemBuilder: (context, index) {
+              final i = index + 1;
+              return Padding(
+                padding: EdgeInsets.only(right: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    // TODO: Implement full-screen gallery view
+                  },
+                  child: Hero(
+                    tag: 'gallery_$i',
+                    child: Container(
+                      width: 180,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: CachedNetworkImage(
+                          imageUrl: widget.image[i],
+                          fit: BoxFit.cover,
+                          placeholder: (context, url) => Container(
+                            color: Colors.grey[300],
+                            child: const Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) => Image.asset(
+                            AppAssets.Marker,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInfoSection({
+    required String title,
+    required String content,
+    IconData? icon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 24, color: AppColors.primaryColor),
+              const SizedBox(width: 8),
+            ],
+            Text(title, style: AppTextStyle.headLineStyle),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Text(
+          content,
+          style: AppTextStyle.bodyStyle.copyWith(
+            height: 1.5,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBottomButton() {
+    final isLogin = FirebaseAuth.instance.currentUser;
+    
+    return Container(
+      padding: EdgeInsets.only(
+        left: 16,
+        right: 16,
+        top: 20,
+        bottom: MediaQuery.of(context).padding.bottom + 16,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.08),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
+          ),
+        ],
+      ),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          elevation: 0,
+        ),
+        onPressed: () {
+          TripDataManager().setDestination(widget.title, widget.image[0]);
+          if (isLogin != null) {
+            pushWithoutNavBar(
+              context,
+              MaterialPageRoute(builder: (context) => StepScreen()),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('Vui lòng đăng nhập để tạo lịch trình'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                margin: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).size.height - 100,
+                  right: 20,
+                  left: 20,
+                ),
+              ),
+            );
+          }
+        },
+        child: Text(
+          "Tạo lịch trình",
+          style: AppTextStyle.buttonText.copyWith(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-  final isLogin = FirebaseAuth.instance.currentUser;
-    return SingleChildScrollView(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Scaffold(
+      body: Stack(
         children: [
-          // Hero Image Section
-          Stack(
-            children: [
-              CachedNetworkImage(
-                imageUrl: image.isNotEmpty ? image[0] : '',
-                fit: BoxFit.cover,
-                height: 250, // Increased height for better visual impact
-                width: MediaQuery.sizeOf(context).width,
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    Image.asset(
-                  AppAssets.Marker,
-                  fit: BoxFit.cover,
-                  height: 250,
-                  width: MediaQuery.sizeOf(context).width,
-                ),
-                errorWidget: (context, url, error) => Image.asset(
-                  AppAssets.Marker,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      back(),
-                      Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: widget,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 16),
+          SingleChildScrollView(
+            controller: _scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title and Address Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  child: Text(title, style: AppTextStyle.headStyle),
-                ),
-                Row(
-                  children: [
-                    SvgPicture.asset(
-                      AppAssets.Vn,
-                      width: 20,
-                      height: 20,
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        address,
-                        style: AppTextStyle.bodyStyle,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                _buildImageSection(),
+                Container(
+                  margin: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.title,
+                        style: AppTextStyle.headStyle.copyWith(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                
-                const Divider(height: 30, thickness: 1),
-                
-                // Description Section
-                Text(description, style: AppTextStyle.bodyStyle),
-                
-                const Divider(height: 30, thickness: 1),
-                
-                // Gallery Section
-                Text('Ảnh minh họa', style: AppTextStyle.headLineStyle),
-                SizedBox(height: 20),
-                if (image.length >= 4)
-                  SizedBox(
-                    height: 120,
-                    child: ListView(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        for (int i = 1; i < 4; i++)
-                          Padding(
-                            padding: EdgeInsets.only(right: i < 3 ? 10 : 0),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(20),
-                              child: CachedNetworkImage(
-                                imageUrl: image[i],
-                                width: 160, // Fixed width for consistent look
-                                fit: BoxFit.cover,
-                                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                                    Image.asset(
-                                  AppAssets.Marker,
-                                  fit: BoxFit.cover,
-                                ),
-                                errorWidget: (context, url, error) => Image.asset(
-                                  AppAssets.Marker,
-                                  fit: BoxFit.cover,
-                                ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            AppAssets.Vn,
+                            width: 24,
+                            height: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              widget.address,
+                              style: AppTextStyle.bodyStyle.copyWith(
+                                color: Colors.black54,
+                                height: 1.5,
                               ),
                             ),
                           ),
-                      ],
-                    ),
+                        ],
+                      ),
+                      const Divider(height: 32),
+                      _buildInfoSection(
+                        title: 'Giới thiệu',
+                        content: widget.description,
+                        icon: Icons.info_outline,
+                      ),
+                      const SizedBox(height: 24),
+                      _buildGallerySection(),
+                      if (widget.image.length >= 4) const Divider(height: 32),
+                      _buildInfoSection(
+                        title: 'Lịch sử',
+                        content: widget.history,
+                        icon: Icons.history,
+                      ),
+                      const Divider(height: 32),
+                      _buildInfoSection(
+                        title: 'Đặc trưng',
+                        content: widget.feature,
+                        icon: Icons.star_outline,
+                      ),
+                      const SizedBox(height: 100), // Space for bottom button
+                    ],
                   ),
-                
-                const Divider(height: 30, thickness: 1),
-                
-                // History Section
-                Text('Lịch sử', style: AppTextStyle.headLineStyle),
-                SizedBox(height: 10),
-                Text(history, style: AppTextStyle.bodyStyle),
-                
-                const Divider(height: 30, thickness: 1),
-                
-                // Feature Section
-                Text('Đặc trưng', style: AppTextStyle.headLineStyle),
-                SizedBox(height: 10),
-                Text(feature, style: AppTextStyle.bodyStyle),
+                ),
               ],
             ),
           ),
-
-          // Bottom Button
-          Container(
-            padding: EdgeInsets.only(
-              left: 16,
-              right: 16,
-              top: 20,
-              bottom: MediaQuery.sizeOf(context).height * 0.1,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, -5),
-                ),
-              ],
-            ),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15),
-                ),
-                onPressed: () {
-                  TripDataManager().setDestination(title, image[0]);
-                  if (isLogin != null) {
-                    pushWithoutNavBar(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StepScreen(),
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Vui lòng đăng nhập để tạo lịch trình'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  }
-                },
-                child: Text(
-                  "Tạo lịch trình",
-                  style: AppTextStyle.buttonText,
-                ),
-              ),
-            ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: _buildAppBar(),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _buildBottomButton(),
           ),
         ],
       ),
