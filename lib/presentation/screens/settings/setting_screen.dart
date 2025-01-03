@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/auth/login.dart';
+import 'package:ui_project/presentation/screens/settings/email_service.dart';
 import 'package:ui_project/presentation/screens/settings/profile/profile_dialog.dart';
 import 'package:ui_project/presentation/screens/settings/trips_screen.dart';
 import 'package:ui_project/presentation/screens/settings/user_screen.dart';
@@ -94,13 +95,96 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ListSettings(
               leading: AppAssets.language,
-              title: 'Ngôn ngữ',
-              screen: Container(),
-            ),
-            ListSettings(
-              leading: AppAssets.language, // Thêm icon calendar vào AppAssets
               title: 'Lịch trình của tôi',
               screen: TripsScreen(),
+            ),
+            ListTile(
+              onTap: () async {
+                String? deleteReason;
+                bool? confirmDelete = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext context) {
+                    final TextEditingController reasonController = TextEditingController();
+
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return AlertDialog(
+                          title: const Text('Xác nhận xoá tài khoản'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('Bạn có chắc chắn muốn xoá tài khoản không?'),
+                              const SizedBox(height: 16),
+                              TextFormField(
+                                controller: reasonController,
+                                decoration: InputDecoration(
+                                  labelText: 'Lý do xoá tài khoản',
+                                  border: OutlineInputBorder(),
+                                  suffixIcon: reasonController.text.length < 30
+                                      ? Icon(Icons.error, color: Colors.red)
+                                      : Icon(Icons.check, color: Colors.green),
+                                ),
+                                maxLines: 3,
+                                onChanged: (value) {
+                                  setState(() {});
+                                  deleteReason = value;
+                                },
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                '${reasonController.text.length}/30 ký tự',
+                                style: TextStyle(
+                                  color: reasonController.text.length < 30 ? Colors.red : Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false);
+                              },
+                              child: const Text('Hủy'),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                if (reasonController.text.trim().length >= 30) {
+                                  Navigator.of(context).pop(true);
+                                }
+                              },
+                              child: const Text('Xoá tài khoản'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+
+                if (confirmDelete == true) {
+                  final user = FirebaseAuth.instance.currentUser;
+                  if (user != null) {
+                    await EmailService.sendDeleteAccountRequest(user.email!, deleteReason!);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Yêu cầu xoá tài khoản đã được gửi, chúng tôi sẽ phản hồi lại cho bạn trong vòng 30 ngày.'),
+                      ),
+                    );
+                  }
+                }
+              },
+              leading: Icon(
+                Icons.delete,
+                color: Colors.red,
+              ),
+              title: const Text(
+                'Xoá tài khoản',
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ),
             ListTile(
               onTap: () async {
