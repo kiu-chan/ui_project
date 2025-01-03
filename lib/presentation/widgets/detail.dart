@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -31,6 +32,7 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  final isLogin = FirebaseAuth.instance.currentUser;
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,12 +199,21 @@ class DetailPage extends StatelessWidget {
                 ),
                 onPressed: () {
                   TripDataManager().setDestination(title, image[0]);
-                  pushWithoutNavBar(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => StepScreen(),
-                    ),
-                  );
+                  if (isLogin != null) {
+                    pushWithoutNavBar(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StepScreen(),
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Vui lòng đăng nhập để tạo lịch trình'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 child: Text(
                   "Tạo lịch trình",

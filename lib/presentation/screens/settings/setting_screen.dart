@@ -12,6 +12,7 @@ import 'package:ui_project/presentation/screens/settings/profile/profile_dialog.
 import 'package:ui_project/presentation/screens/settings/trips_screen.dart';
 import 'package:ui_project/presentation/screens/settings/user_screen.dart';
 import 'package:ui_project/presentation/widgets/list_settings.dart';
+import 'package:ui_project/presentation/screens/select_screen.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -22,11 +23,20 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   Map<String, dynamic> userData = {};
+  bool isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
+    checkAuthState();
     fetchUserData();
+  }
+
+  void checkAuthState() {
+    final user = FirebaseAuth.instance.currentUser;
+    setState(() {
+      isLoggedIn = user != null;
+    });
   }
 
   Future<void> fetchUserData() async {
@@ -48,7 +58,64 @@ class _SettingScreenState extends State<SettingScreen> {
     });
   }
 
+  Future<void> handleLogin(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const Login()),
+    );
+    if (result == true) {
+      checkAuthState();
+      fetchUserData();
+    }
+  }
+
+  Future<void> handleLogout(BuildContext context) async {
+    bool? confirmLogout = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận đăng xuất'),
+          content: const Text('Bạn có chắc chắn muốn đăng xuất không?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Đăng xuất'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmLogout == true) {
+      await FirebaseAuth.instance.signOut();
+      setState(() {
+        isLoggedIn = false;
+        userData = {};
+      });
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const SelectPage()),
+        (route) => false,
+      );
+    }
+  }
+
   Widget _buildUserInfo() {
+    if (!isLoggedIn) {
+      return ListTile(
+        leading: const CircleAvatar(
+          radius: 30,
+          child: Icon(Icons.person, size: 30),
+        ),
+        title: const Text('Chưa đăng nhập'),
+        subtitle: const Text('Đăng nhập để truy cập thêm tính năng'),
+      );
+    }
+
     return ListTile(
       leading: CircleAvatar(
         radius: 30,
@@ -56,7 +123,7 @@ class _SettingScreenState extends State<SettingScreen> {
             ? MemoryImage(base64Decode(userData['avatar']))
             : null,
         child: userData['avatar'] == null
-            ? Icon(Icons.person, size: 30)
+            ? const Icon(Icons.person, size: 30)
             : null,
       ),
       title: Text(userData['fullName'] ?? ''),
@@ -85,152 +152,128 @@ class _SettingScreenState extends State<SettingScreen> {
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 15),
           children: [
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildUserInfo(),
-            SizedBox(height: 20),
-            ListSettings(
-              leading: AppAssets.Person,
-              title: 'Thông tin cá nhân',
-              screen: UserScreen(userData: userData),
-            ),
-            ListSettings(
-              leading: AppAssets.language,
-              title: 'Lịch trình của tôi',
-              screen: TripsScreen(),
-            ),
-            ListTile(
-              onTap: () async {
-                String? deleteReason;
-                bool? confirmDelete = await showDialog<bool>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    final TextEditingController reasonController = TextEditingController();
+            const SizedBox(height: 20),
+            if (isLoggedIn) ...[
+              ListSettings(
+                leading: AppAssets.Person,
+                title: 'Thông tin cá nhân',
+                screen: UserScreen(userData: userData),
+              ),
+              ListSettings(
+                leading: AppAssets.language,
+                title: 'Lịch trình của tôi',
+                screen: const TripsScreen(),
+              ),
+              ListTile(
+                onTap: () async {
+                  String? deleteReason;
+                  bool? confirmDelete = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      final TextEditingController reasonController = TextEditingController();
 
-                    return StatefulBuilder(
-                      builder: (context, setState) {
-                        return AlertDialog(
-                          title: const Text('Xác nhận xoá tài khoản'),
-                          content: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text('Bạn có chắc chắn muốn xoá tài khoản không?'),
-                              const SizedBox(height: 16),
-                              TextFormField(
-                                controller: reasonController,
-                                decoration: InputDecoration(
-                                  labelText: 'Lý do xoá tài khoản',
-                                  border: OutlineInputBorder(),
-                                  suffixIcon: reasonController.text.length < 30
-                                      ? Icon(Icons.error, color: Colors.red)
-                                      : Icon(Icons.check, color: Colors.green),
+                      return StatefulBuilder(
+                        builder: (context, setState) {
+                          return AlertDialog(
+                            title: const Text('Xác nhận xoá tài khoản'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Text('Bạn có chắc chắn muốn xoá tài khoản không?'),
+                                const SizedBox(height: 16),
+                                TextFormField(
+                                  controller: reasonController,
+                                  decoration: InputDecoration(
+                                    labelText: 'Lý do xoá tài khoản',
+                                    border: const OutlineInputBorder(),
+                                    suffixIcon: reasonController.text.length < 30
+                                        ? const Icon(Icons.error, color: Colors.red)
+                                        : const Icon(Icons.check, color: Colors.green),
+                                  ),
+                                  maxLines: 3,
+                                  onChanged: (value) {
+                                    setState(() {});
+                                    deleteReason = value;
+                                  },
                                 ),
-                                maxLines: 3,
-                                onChanged: (value) {
-                                  setState(() {});
-                                  deleteReason = value;
+                                const SizedBox(height: 8),
+                                Text(
+                                  '${reasonController.text.length}/30 ký tự',
+                                  style: TextStyle(
+                                    color: reasonController.text.length < 30 ? Colors.red : Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
                                 },
+                                child: const Text('Hủy'),
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                '${reasonController.text.length}/30 ký tự',
-                                style: TextStyle(
-                                  color: reasonController.text.length < 30 ? Colors.red : Colors.green,
-                                ),
+                              TextButton(
+                                onPressed: () {
+                                  if (reasonController.text.trim().length >= 30) {
+                                    Navigator.of(context).pop(true);
+                                  }
+                                },
+                                child: const Text('Xoá tài khoản'),
                               ),
                             ],
-                          ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(false);
-                              },
-                              child: const Text('Hủy'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                if (reasonController.text.trim().length >= 30) {
-                                  Navigator.of(context).pop(true);
-                                }
-                              },
-                              child: const Text('Xoá tài khoản'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                );
+                          );
+                        },
+                      );
+                    },
+                  );
 
-                if (confirmDelete == true) {
-                  final user = FirebaseAuth.instance.currentUser;
-                  if (user != null) {
-                    await EmailService.sendDeleteAccountRequest(user.email!, deleteReason!);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Yêu cầu xoá tài khoản đã được gửi, chúng tôi sẽ phản hồi lại cho bạn trong vòng 30 ngày.'),
-                      ),
-                    );
+                  if (confirmDelete == true) {
+                    final user = FirebaseAuth.instance.currentUser;
+                    if (user != null) {
+                      await EmailService.sendDeleteAccountRequest(user.email!, deleteReason!);
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Yêu cầu xoá tài khoản đã được gửi, chúng tôi sẽ phản hồi lại cho bạn trong vòng 30 ngày.'),
+                          ),
+                        );
+                      }
+                    }
                   }
-                }
-              },
-              leading: Icon(
-                Icons.delete,
-                color: Colors.red,
-              ),
-              title: const Text(
-                'Xoá tài khoản',
-                style: TextStyle(
+                },
+                leading: const Icon(
+                  Icons.delete,
                   color: Colors.red,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
+                ),
+                title: const Text(
+                  'Xoá tài khoản',
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
-            ),
+            ],
             ListTile(
-              onTap: () async {
-                bool? confirmLogout = await showDialog<bool>(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AlertDialog(
-                      title: const Text('Xác nhận đăng xuất'),
-                      content: const Text(
-                          'Bạn có chắc chắn muốn đăng xuất không?'),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(false);
-                          },
-                          child: const Text('Hủy'),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pop(true);
-                          },
-                          child: const Text('Đăng xuất'),
-                        ),
-                      ],
-                    );
-                  },
-                );
-
-                if (confirmLogout == true) {
-                  pushWithoutNavBar(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const Login(),
-                    ),
-                  );
+              onTap: () {
+                if (isLoggedIn) {
+                  handleLogout(context);
+                } else {
+                  handleLogin(context);
                 }
               },
               leading: SvgPicture.asset(
-                AppAssets.Logout,
+                isLoggedIn ? AppAssets.Logout : AppAssets.Logout,
                 color: Colors.red,
                 height: 20,
                 width: 20,
               ),
-              title: const Text(
-                'Đăng xuất',
-                style: TextStyle(
+              title: Text(
+                isLoggedIn ? 'Đăng xuất' : 'Đăng nhập',
+                style: const TextStyle(
                   color: Colors.red,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
