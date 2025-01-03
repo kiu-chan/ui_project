@@ -38,7 +38,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
   void _initializeControllers() {
     _nameController = TextEditingController(text: widget.userData['fullName'] ?? '');
     _emailController = TextEditingController(text: widget.userData['email'] ?? '');
-    _birthDateController = TextEditingController(text: widget.userData['dateOfBirth'] ?? '');
+    // _birthDateController = TextEditingController(text: widget.userData['dateOfBirth'] ?? '');
     _userIdController = TextEditingController(text: widget.userData['userId']?.toString() ?? '');
     _avatarBase64 = widget.userData['avatar'];
   }
@@ -47,7 +47,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
-    _birthDateController.dispose();
+    // _birthDateController.dispose();
     _userIdController.dispose();
     super.dispose();
   }
@@ -101,11 +101,11 @@ class _ProfileDialogState extends State<ProfileDialog> {
       lastDate: DateTime.now(),
     );
 
-    if (picked != null) {
-      setState(() {
-        _birthDateController.text = "${picked.day}/${picked.month}/${picked.year}";
-      });
-    }
+    // if (picked != null) {
+    //   setState(() {
+    //     _birthDateController.text = "${picked.day}/${picked.month}/${picked.year}";
+    //   });
+    // }
   }
 
   Future<void> _updateProfile() async {
@@ -119,7 +119,7 @@ class _ProfileDialogState extends State<ProfileDialog> {
           .doc(FirebaseAuth.instance.currentUser?.uid)
           .update({
         'fullName': _nameController.text,
-        'dateOfBirth': _birthDateController.text,
+        // 'dateOfBirth': _birthDateController.text,
         'userId': _userIdController.text,
       });
 
@@ -253,26 +253,26 @@ class _ProfileDialogState extends State<ProfileDialog> {
                   ),
                 ),
                 SizedBox(height: 10),
-                TextFormField(
-                  controller: _birthDateController,
-                  enabled: isEditing,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    labelText: 'Ngày sinh',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    suffixIcon: isEditing
-                        ? IconButton(
-                            icon: Icon(Icons.calendar_today),
-                            onPressed: _selectDate,
-                          )
-                        : null,
-                  ),
-                  validator: (value) =>
-                      value?.isEmpty == true ? 'Vui lòng chọn ngày sinh' : null,
-                ),
-                SizedBox(height: 20),
+                // TextFormField(
+                //   controller: _birthDateController,
+                //   enabled: isEditing,
+                //   readOnly: true,
+                //   decoration: InputDecoration(
+                //     labelText: 'Ngày sinh',
+                //     border: OutlineInputBorder(
+                //       borderRadius: BorderRadius.circular(10),
+                //     ),
+                //     suffixIcon: isEditing
+                //         ? IconButton(
+                //             icon: Icon(Icons.calendar_today),
+                //             onPressed: _selectDate,
+                //           )
+                //         : null,
+                //   ),
+                //   validator: (value) =>
+                //       value?.isEmpty == true ? 'Vui lòng chọn ngày sinh' : null,
+                // ),
+                // SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
