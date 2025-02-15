@@ -18,57 +18,45 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _fullNameController = TextEditingController();
-  final _dobController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   Future<void> _registerUser() async {
     if (_formKey.currentState!.validate()) {
       try {
-        // Check if passwords match
-        if (_passwordController.text.trim() !=
-            _confirmPasswordController.text.trim()) {
+        if (_passwordController.text.trim() != _confirmPasswordController.text.trim()) {
           _showSnackbar('Passwords do not match');
           return;
         }
 
-        // Register the user with FirebaseAuth
-        UserCredential userCredential =
-            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
 
-        // Save user data to Firestore
         await _saveUserToFirestore(
           userCredential.user!.uid,
           _fullNameController.text.trim(),
           _emailController.text.trim(),
-          _dobController.text.trim(),
         );
 
-        // Show success message and navigate to Login page
         _showSnackbar('Registration successful!');
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const Login()),
         );
       } catch (e) {
-        // Handle errors and show error message
         _showSnackbar('Error: ${e.toString()}');
       }
     }
   }
 
-  Future<void> _saveUserToFirestore(
-      String userId, String fullName, String email, String dob) async {
-    // Generate a random userId
+  Future<void> _saveUserToFirestore(String userId, String fullName, String email) async {
     int userNumericId = await _generateUniqueUserId();
 
     await FirebaseFirestore.instance.collection('users').doc(userId).set({
-      'userId': userNumericId, // Add unique numeric userId
+      'userId': userNumericId,
       'fullName': fullName,
       'email': email,
-      'dateOfBirth': dob,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
@@ -79,17 +67,14 @@ class _RegisterPageState extends State<RegisterPage> {
     bool isUnique = false;
 
     while (!isUnique) {
-      // Generate a random number between 10000 and 99999
       userId = 10000 + random.nextInt(90000);
-
-      // Check if userId is unique in Firestore
       final querySnapshot = await FirebaseFirestore.instance
           .collection('users')
           .where('userId', isEqualTo: userId)
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        isUnique = true; // Unique ID found
+        isUnique = true;
       }
     }
     return userId;
@@ -107,7 +92,6 @@ class _RegisterPageState extends State<RegisterPage> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _fullNameController.dispose();
-    _dobController.dispose();
     super.dispose();
   }
 
@@ -172,7 +156,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Full Name TextField
                   _buildTextField(
                     controller: _fullNameController,
                     labelText: 'Họ tên',
@@ -183,18 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ),
-                  // Date of Birth TextField
-                  _buildTextField(
-                    controller: _dobController,
-                    labelText: 'Sinh nhật',
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your date of birth';
-                      }
-                      return null;
-                    },
-                  ),
-                  // Email TextField
+
                   _buildTextField(
                     controller: _emailController,
                     labelText: 'Email',
@@ -208,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ),
-                  // Password TextField
+
                   _buildTextField(
                     controller: _passwordController,
                     labelText: 'Mật khẩu',
@@ -223,7 +195,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ),
-                  // Confirm Password TextField
+
                   _buildTextField(
                     controller: _confirmPasswordController,
                     labelText: 'Nhập lại mật khẩu',
@@ -237,7 +209,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Register Button
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: ElevatedButton(
@@ -263,7 +234,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   const SizedBox(height: 20),
 
-                  // Login Redirect
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [

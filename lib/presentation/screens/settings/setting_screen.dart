@@ -267,14 +267,14 @@ class _SettingScreenState extends State<SettingScreen> {
               },
               leading: SvgPicture.asset(
                 isLoggedIn ? AppAssets.Logout : AppAssets.Logout,
-                color: Colors.red,
+                color: isLoggedIn?  Colors.red : Colors.green,
                 height: 20,
                 width: 20,
               ),
               title: Text(
                 isLoggedIn ? 'Đăng xuất' : 'Đăng nhập',
-                style: const TextStyle(
-                  color: Colors.red,
+                style: TextStyle(
+                  color: isLoggedIn ? Colors.red : Colors.green,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
                 ),

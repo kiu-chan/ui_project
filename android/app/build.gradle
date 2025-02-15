@@ -29,8 +29,8 @@ android {
         applicationId = "com.mon.ui_project"
         minSdk = 23
         targetSdk = flutter.targetSdkVersion
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 4
+        versionName = "1.1.1"
     }
 
     signingConfigs {
