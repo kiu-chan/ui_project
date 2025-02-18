@@ -18,6 +18,7 @@ sealed class AppAssets {
   static const String ThemeMode = "assets/icons/theme_mode.svg";
   static const String Logout = "assets/icons/logout.svg";
   static const String MarkerMap = "assets/icons/marker.svg";
+  static const String Family = "assets/icons/family.svg";
 
   // Png
   static const String Marker = "assets/images/market.png";

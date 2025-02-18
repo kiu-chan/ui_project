@@ -7,6 +7,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ui_project/core/constant/assets.dart';
 import 'package:ui_project/core/constant/color.dart';
 import 'package:ui_project/presentation/screens/auth/login.dart';
+import 'package:ui_project/presentation/screens/settings/app_profile.dart';
 import 'package:ui_project/presentation/screens/settings/email_service.dart';
 import 'package:ui_project/presentation/screens/settings/profile/profile_dialog.dart';
 import 'package:ui_project/presentation/screens/settings/trips_screen.dart';
@@ -257,6 +258,11 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
               ),
             ],
+            ListSettings(
+              leading: AppAssets.Family,
+              title: 'Về chúng tôi',
+              screen: const AppProfile(),
+            ),
             ListTile(
               onTap: () {
                 if (isLoggedIn) {
