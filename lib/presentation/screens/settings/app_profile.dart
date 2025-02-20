@@ -54,22 +54,22 @@ class AppProfile extends StatelessWidget {
           TeamMemberCard(
             name: 'Hoàng Bảo Khanh',
             role: 'Trưởng nhóm',
-            avatarAsset: 'assets/images/avatar1.jpg',
+            avatarAsset: 'assets/images/avatar/khanh.jpg',
           ),
           TeamMemberCard(
             name: 'Nguyễn Khánh Linh',
             role: 'Thiết kế UI/UX',
-            avatarAsset: 'assets/images/avatar2.jpg',
+            avatarAsset: 'assets/images/avatar/linh.jpg',
           ),
           TeamMemberCard(
             name: 'Lê Khánh Toàn',
             role: 'Lập trình viên',
-            avatarAsset: 'assets/images/avatar3.jpg',
+            avatarAsset: 'assets/images/avatar/toan.jpg',
           ),
           TeamMemberCard(
             name: 'Nguyễn Thị Hoài Thu',
             role: 'Database',
-            avatarAsset: 'assets/images/avatar3.jpg',
+            avatarAsset: 'assets/images/avatar/thu.jpg',
           ),
         ],
       ),
